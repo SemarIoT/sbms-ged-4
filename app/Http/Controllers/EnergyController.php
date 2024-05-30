@@ -27,17 +27,8 @@ class EnergyController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function monitor()
     {
-        // Versi lama mas wildan : Menghitung energy berdasarkan jumlah daya tiap jam
-        /* $energy = Energy::where('id_kwh', '1')->latest()->Paginate(1);
-        $energy2 = Energy::where('id_kwh', '2')->latest()->Paginate(1);
-        $energy_today = Energy::where('id_kwh', '1')->select(Energy::raw("SUM(active_power) as energy_today "))->whereDate('created_at', Carbon::today())->pluck('energy_today');
-        $energy_month = Energy::where('id_kwh', '1')->select(Energy::raw("SUM(active_power) as energy_month "))->whereMonth('created_at', Carbon::today())->pluck('energy_month');
-        $energy_submonth = Energy::where('id_kwh', '1')->select(Energy::raw("SUM(active_power) as energy_submonth "))->whereMonth('created_at', Carbon::today()->subMonth())->pluck('energy_submonth');
-        */
-
-        // Versi Mario : Menggunakan data dari kWh meter langsung. Tinggal diitung selisihnya untuk mencari tiap waktu tertentu
         $todayDate = Carbon::today()->toDateString(); // return Y-m-d string
         $yesterdayDate = Carbon::now()->subDays(1)->toDateString();
         $thisMonth = Carbon::now()->month; // return int
@@ -106,13 +97,8 @@ class EnergyController extends Controller
         $energy_cost_pokok = EnergyCost::latest()->first()->pokok;
         $energy_cost_delay = EnergyCost::latest()->first()->delay; // Delay kirim  data
 
-        $energy_panels = EnergyPanel::oldest()->Paginate(100);
-        $namaPanel = EnergyPanel::oldest()->pluck('nama')->toArray();
-        $namaLampu = Light::oldest()->pluck('nama')->toArray();
-        $devicesPanel = array_merge($namaPanel, $namaLampu);
-
-        $energy_lampu = LightMaster::find(1);
-        // dd($energies1, $avgVolt, $avgCurrent, $avgFreq, $avgP, $avgQ, $avgS);
+        // Device Status
+        $devicesPanel = EnergyPanel::get();
 
         return view('energy.monitor', compact(
             'energies1',
@@ -124,19 +110,16 @@ class EnergyController extends Controller
             'energy_cost',
             'energy_cost_pokok',
             'energyLastMonth',
-            'energy_panels',
             'energy_cost_delay',
-            'energy_lampu',
+            'energiesCollection',
             'avgVolt',
             'avgCurrent',
             'avgFreq',
             'avgP',
             'avgQ',
             'avgS',
-            'energiesCollection',
             'eachTodayEnergy',
-            'devicesPanel',
-            'namaLampu'
+            'devicesPanel'
         ));
     }
 

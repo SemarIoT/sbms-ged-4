@@ -119,7 +119,6 @@
     @yield('content')
 
     </div>
-    </div>
 
 
     <!-- JavaScript files-->

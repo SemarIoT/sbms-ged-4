@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\PagesController;
 use App\Http\Controllers\EnergyController;
 use App\Http\Controllers\SettingController;
 
@@ -10,23 +11,16 @@ use App\Http\Controllers\SettingController;
 
 
 //digunakan untuk mengatur hal hal yang berkaitan dengan halaman dashbooards (landing page tanpa login)
-Route::resource('/', \App\Http\Controllers\DashboardsController::class);
+Route::get('/', [PagesController::class, 'noAuth']);
 
 Route::get('/login', function () {
     return view('auth.login');
 });
-//Profil page -> digunakan untuk mengatur hal hal yang berkaitan dengan halaman profile
-Route::get('/changePassword', [AuthController::class, 'showChangePasswordForm'])->name('changePassword');
-Route::post('/changePassword', [AuthController::class, 'changePassword'])->name('changePassword');
-Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
-Route::get('showprofile/{id}', [AuthController::class, 'showprofile'])->name('showprofile');
-Route::post('updateprofile', [AuthController::class, 'updateprofile'])->name('updateprofile');
-
 //digunakan untuk mengatur hal hal yang berkaitan dengan halaman dashboard (setelah login)
-Route::resource('/dashboard', \App\Http\Controllers\DashboardController::class);
+Route::get('/dashboard', [PagesController::class, 'wasLogin']);
 
 //digunakan untuk mengatur hal hal yang berkaitan dengan halaman energy monitoring
-Route::resource('/monitor', \App\Http\Controllers\EnergyController::class);
+Route::get('/monitor', [EnergyController::class, 'monitor']);
 Route::get('/statistic', [EnergyController::class, 'energyStat']);
 Route::get('/control', [EnergyController::class, 'showData']);
 Route::get('/control-change-status-panel-master/{id}', [EnergyController::class, 'changePanelMaster']);
@@ -40,6 +34,13 @@ Route::get('/energyexportcsv', [EnergyController::class, 'export_excel_csv']);
 Route::get('/about', [AboutController::class, 'index']);
 Route::get('/aboutedit/{id}', [AboutController::class, 'aboutedit'])->name('aboutedit');
 Route::post('aboutupdate', [AboutController::class, 'aboutupdate'])->name('aboutupdate');
+
+//Profil page -> digunakan untuk mengatur hal hal yang berkaitan dengan halaman profile
+Route::get('/changePassword', [AuthController::class, 'showChangePasswordForm'])->name('changePassword');
+Route::post('/changePassword', [AuthController::class, 'changePassword'])->name('changePassword');
+Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+Route::get('showprofile/{id}', [AuthController::class, 'showprofile'])->name('showprofile');
+Route::post('updateprofile', [AuthController::class, 'updateprofile'])->name('updateprofile');
 
 // ======== ADMIN PAGE =========
 //digunakan untuk mengatur hal hal yang berkaitan dengan halaman daftar hak akses (admin, user, developer)

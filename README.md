@@ -1,17 +1,5 @@
-# Smart Building Management System 2
-
-Smart BMS by IoT Lab UNS merupakan demo kit yang merepresentasikan sebuah bangunan cerdas berbasis IoT. Perangkat-perangkat elektronis pada ruangan dapat dikontrol dari jarak jauh. Dapat memantau energi yang digunakan serta melihat perkiraan jumlah tagihannya.
-
-## What's different?
-
-Versi ini adalah pengembangan versi iotlab-uns.com/smart-bms. Dengan beberapa penyesuaian, yaitu :
-| Semso Demo 2022 | Smart-Office 2023|
-| :-------------: |:-------------:|
-| Menggunakan 2 Node MCU, 1 Monitor & 1 Control | Hanya 1 NodeMCU untuk Monitor dan Control|
-| API menyederhanakan dari smart-bms | Hanya ada 2 API, 1 monitor dan 1 control|
-| NodeMCU Control membaca data dari API terpisah | NodeMCU selalu membaca API kontrol, tetapi setiap 2 menit mengirimkan data monitor dan mendapat return berupa state control |
-| Tabel tiap sensor dipisah-pisah | Tabel dijadikan satu untuk mempermudah pembacaan control ESP |
-| Perhitungan energi dari web | Menerima data energi dari kWh meter agar akurat |
+# SBMS Gedung 4 Fakultas Teknik
+Untuk monitoring dan controlling panel SDP Gedung 4 Fakultas Teknik
 
 ## Installation
 
@@ -24,13 +12,9 @@ Versi ini adalah pengembangan versi iotlab-uns.com/smart-bms. Dengan beberapa pe
 
 1. Clone repo ini
     ```
-    git clone https://github.com/SemarIoT/smart-office-2023.git
+    git clone https://github.com/SemarIoT/sbms-ged-4.git
     ```
-2. Pindah ke folder website dengan memakai terminal (GitBash / Powershell)
-    ```
-    cd smart-office-2023
-    cd website
-    ```
+2. Buka terminal (GitBash / Powershell) pada direktori _'sbms-ged-4'_
 3. Install dependensinya
     ```
     composer install

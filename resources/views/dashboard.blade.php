@@ -109,15 +109,15 @@
                                 @foreach($panels as $panel)
                                 <div class="row d-flex justify-content-between">
                                     <div class="col-md">
-                                        <div class="text-lg fw-light mb-0 text-info">{{ $panel->nama }}</div>
+                                        <div class="text-lg mb-0 text-info">{{ $panel->nama }}</div>
                                     </div>
                                     @if($panel->status==1)
                                     <div class="col-md">
-                                        <div class="text-lg fw-light mb-0 text-end text-success">Online</div>
+                                        <div class="text-lg fw-bold mb-0 text-end text-success">ON</div>
                                     </div>
                                     @else
                                     <div class="col-md">
-                                        <div class="text-lg fw-light mb-0 text-end text-dash-color-3">Offline</div>
+                                        <div class="text-lg fw-bold mb-0 text-end text-dash-color-3">OFF</div>
                                     </div>
                                     @endif
                                 </div>
@@ -144,9 +144,9 @@
                                     $i=0;
                                     @endphp
                                     @foreach ($panels as $panel)
-                                    <div class="col-lg-6">
-                                        <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                            $energies[$i]->tegangan }}</p>
+                                    <div class="col-lg-6 text-center">
+                                        <p class="text-lg mb-0 text-dash-color-1">{{
+                                            $energies[$i]->tegangan }} V</p>
                                         <p>{{ $panel->nama }}</p>
                                     </div>
                                     @php
@@ -168,9 +168,9 @@
                                         $i=0;
                                         @endphp
                                         @foreach ($panels as $panel)
-                                        <div class="col-lg-6">
-                                            <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                                $energies[$i]->arus }}</p>
+                                        <div class="col-lg-6 text-center">
+                                            <p class="text-lg mb-0 text-dash-color-1">{{
+                                                $energies[$i]->arus }} A</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php
@@ -193,9 +193,9 @@
                                         $i=0;
                                         @endphp
                                         @foreach ($panels as $panel)
-                                        <div class="col-lg-6">
-                                            <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                                $energies[$i]->frekuensi}}</p>
+                                        <div class="col-lg-6 text-center">
+                                            <p class="text-lg mb-0 text-dash-color-1">{{
+                                                $energies[$i]->frekuensi}} Hz</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php
@@ -221,9 +221,9 @@
                                         $i=0;
                                         @endphp
                                         @foreach ($panels as $panel)
-                                        <div class="col-lg-6">
-                                            <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                                $energies[$i]->active_power }}</p>
+                                        <div class="col-lg-6 text-center">
+                                            <p class="text-lg mb-0 text-dash-color-1">{{
+                                                $energies[$i]->active_power }} W</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php
@@ -246,9 +246,9 @@
                                         $i=0;
                                         @endphp
                                         @foreach ($panels as $panel)
-                                        <div class="col-lg-6">
-                                            <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                                $energies[$i]->reactive_power }}</p>
+                                        <div class="col-lg-6 text-center">
+                                            <p class="text-lg mb-0 text-dash-color-1">{{
+                                                $energies[$i]->reactive_power }} VAR</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php
@@ -271,9 +271,9 @@
                                         $i=0;
                                         @endphp
                                         @foreach ($panels as $panel)
-                                        <div class="col-lg-6">
-                                            <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                                $energies[$i]->apparent_power }}</p>
+                                        <div class="col-lg-6 text-center">
+                                            <p class="text-lg mb-0 text-dash-color-1">{{
+                                                $energies[$i]->apparent_power }} VA</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php

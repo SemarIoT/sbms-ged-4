@@ -22,7 +22,6 @@ class CreateEnergiesTable extends Migration
             $table->float('active_power');
             $table->float('reactive_power');
             $table->float('apparent_power');
-            $table->float('energy')->nullable(true);
             $table->timestamps();
         });
     }

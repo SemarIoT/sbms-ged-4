@@ -24,12 +24,12 @@
 
 <body>
   <header class="header">
-    <nav class="navbar navbar-expand-lg py-2 my-0 bg-darkblue">
+    <nav class="navbar navbar-expand-lg py-2 my-0 bg-topbar">
       <div class="container-fluid d-flex align-items-center justify-content-between py-1">
         <div class="navbar-header d-flex align-items-center"><a class="navbar-brand text-uppercase text-gold"
             href="{{url('dashboard')}}">
-            <div class="brand-text brand-big"><small class="text-color5" style="font-size:15px;">S</small><small
-                class="text-gold" style="font-size:15px;"> BMS</small></div>
+            <div class="brand-text brand-big"><small class="text-color5 text-md fw-bold">S</small><small
+                class="text-gold text-md fw-bold">BMS</small></div>
             <div class="brand-text brand-sm"><strong class="text-color5">S</strong><strong>BMS</strong></div>
           </a>
           <button class="sidebar-toggle text-white">
@@ -38,7 +38,6 @@
             </svg>
           </button>
         </div>
-
 
         @php
         $name_about = App\Models\About::oldest()->get();
@@ -50,9 +49,8 @@
         @endforeach
 
         <ul class="list-inline mb-0">
-          </li>
           <li class="list-inline-item logout px-lg-2">
-            <a class="nav-link text-sm text-color5 px-1 px-lg-0" id="logout" href="{{url('logout')}}">
+            <a class="nav-link text-md text-light fw-bold px-1 px-lg-0" id="logout" href="{{url('logout')}}">
               <span class="d-none d-sm-inline-block">Logout </span>
               <svg class="svg-icon svg-icon-xs svg-icon-heavy">
                 <use xlink:href="#disable-1"> </use>
@@ -70,14 +68,14 @@
       <div class="sidebar-header d-flex align-items-center p-2">
         <a href="{{url('profile')}}">
           <div class="ms-3 title">
-            <h6 class="mb-1 text-color5">{{ Auth::user()->name }}</h6>
+            <h6 class="mb-1 text-white">{{ Auth::user()->name }}</h6>
             <p class="text-sm text-white-50 mb-0 lh-1">{{ Auth::user()->level }}</p>
         </a>
       </div>
   </div>
 
   <hr class="sidebar-divider my-0">
-  <ul class="list-unstyled mb-0">
+  <!-- <ul class="list-unstyled mb-0">
     <li class="sidebar-item"><a class="sidebar-link" href="#authdropdown" data-bs-toggle="collapse">
         <svg class="svg-icon svg-icon-sm svg-icon-heavy">
           <use xlink:href="#security-shield-1"> </use>
@@ -92,7 +90,7 @@
         @endif
       </ul>
     </li>
-  </ul>
+  </ul> -->
   <hr class="sidebar-divider my-0">
   <ul class="list-unstyled">
     <li class="sidebar-item"><a class="sidebar-link" href="{{url('dashboard')}}">

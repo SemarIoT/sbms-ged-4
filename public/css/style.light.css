@@ -46,7 +46,9 @@ https://bootstrapious.com/p/bootstrap-4-dark-admin
   --bs-light: #f8f9fa;
   --bs-dark: #343a40;
   /* Palet Tambahan Mario */
-  --bs-blue: #596CFF;
+  /* --bs-blue: #596CFF; */
+  --bs-blue: #5996FF;
+  --bs-topbar: #446EB5;
   --bs-color2: #whitesmoke;
   --bs-color3: #333333;
   --bs-color4: #E0e6ff;
@@ -90,7 +92,8 @@ body {
 
 hr {
   margin: 1rem 0;
-  color: inherit;
+  /* color: inherit; */
+  color: black;
   background-color: currentColor;
   border: 0;
   opacity: 0.25;
@@ -8445,6 +8448,10 @@ fieldset:disabled .btn {
   color: #343a40 !important;
 }
 
+.text-darkblue {
+  color: #263f6b !important;
+}
+
 .text-color5 {
   color: var(--bs-color5) !important;
 }
@@ -11844,7 +11851,7 @@ nav.navbar .menu-large {
 * ==========================================================
 */
 nav#sidebar {
-  background: var(--bs-darkblue);
+  background: var(--bs-topbar);
   min-width: 300px;
   max-width: 300px;
   color: #85888e;
@@ -13358,6 +13365,10 @@ a.text-hover-dark:focus, a.text-hover-dark:hover {
 
 .bg-blue {
   background: var(--bs-blue) !important;
+}
+
+.bg-topbar {
+  background: var(--bs-topbar) !important;
 }
 
 .bg-color5 {

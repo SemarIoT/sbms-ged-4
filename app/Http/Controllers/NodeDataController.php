@@ -45,9 +45,9 @@ class NodeDataController extends Controller
         Membaca data kwh meter urut dari paling baru
         dibatasi 300 agar tidak berat querynya
     */
-    public function getAllEnergyMonitor()
+    public function getEnergyMonitor()
     {
-        $data = Energy::latest()->take(300)->get();
+        $data = Energy::latest()->take(100)->get();
         $formattedData = $data->map(function ($item) {
             $item->created_at_formatted = $item->created_at->format('d M Y H:i:s');
             return $item;
@@ -59,7 +59,7 @@ class NodeDataController extends Controller
     }
 
     /* 
-        Menyimpan data dari Teensy
+        Menyimpan data dari Node
     */
     public function addEnergyMonitor(Request $request)
     {

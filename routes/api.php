@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SensorDataController;
 use App\Http\Controllers\DoorlockStateController;
+use App\Http\Controllers\EnergyController;
 use App\Http\Controllers\NodeDataController;
 
 /*
@@ -19,25 +20,25 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 /* ESP32 (Data Tegangan, Arus, dkk) */
-Route::get('energyMonitor', [NodeDataController::class, 'getAllEnergyMonitor']); // 300 data energy terakhir untuk debug dan stat
-Route::post('add-energy', [NodeDataController::class, 'addEnergyMonitor']); // Input data monitoring
+Route::get('get-energies', [NodeDataController::class, 'getEnergyMonitor']); // 300 data energy terakhir untuk debug dan stat
+Route::post('add-energies', [NodeDataController::class, 'addEnergyMonitor']); // Input data monitoring
 /* Hanya Data 'total_energy' dari Modbus */
-Route::get('total-energy', [NodeDataController::class, 'getTotalEnergy']); // 1000 data 'total_energy' terakhir
-Route::post('total-energy', [NodeDataController::class, 'addTotalEnergy']); // Input 'total_energy' saja 
+Route::get('get-kwh', [NodeDataController::class, 'getTotalEnergy']); // 1000 data 'total_energy' terakhir
+Route::post('add-kwh', [NodeDataController::class, 'addTotalEnergy']); // Input 'total_energy' saja 
 Route::post('debug-energy', [NodeDataController::class, 'addDebugEnergy']); // untuk debugging semua data energy
-Route::get('daily-energy/{id}', [NodeDataController::class, 'getDailyEnergy']); // 'total_energy' harian
-Route::get('monthly-energy/{id}', [NodeDataController::class, 'getMonthlyEnergy']); // 'total_energy' bulanan
 Route::get('ike-dummy', [NodeDataController::class, 'getIkeDummy']); // data dummy untuk IKE bulanan
 Route::get('ike-dummy-annual', [NodeDataController::class, 'getIkeDummyAnnual']); // data dummy untuk IKE tahunan
 
+/* Energi per Waktu */
+Route::get('daily-energy/{id}', [EnergyController::class, 'getDailyEnergy']); // 'total_energy' harian
+Route::get('daily-energy-reversed/{id}', [EnergyController::class, 'getDailyEnergyReversed']); // 'total_energy' harian terbalik
+Route::get('monthly-energy/{id}', [EnergyController::class, 'getMonthlyEnergy']); // 'total_energy' bulanan
+Route::get('annual-energy/{id}', [EnergyController::class, 'getAnnualEnergy']); // 'total_energy' tahunan
+Route::get('daily-stat/{id}', [EnergyController::class, 'getDailyEnergyStat']); // 'total_energy' harian
+Route::get('monthly-stat/{id}', [EnergyController::class, 'getMonthlyEnergyStat']); // 'total_energy' bulanan
 
 /* ESP Control 4 Relay dan DHT */
-Route::get('energyControl', [NodeDataController::class, 'getEnergyState']); // Dibaca esp untuk mengubah state Relay Contactor
-Route::get('Dht', [NodeDataController::class, 'getDht']); // Cek data yang dikirim dht utama
-Route::post('Dht', [NodeDataController::class, 'postDht']); // Kirim suhu dan humid terus menerus
-
-/* ESP Doorlock */
-Route::get('Doorlock/{id}', [DoorlockStateController::class, 'Doorlock'])->name('Doorlock'); // Dibaca esp untuk mengubah relay doorlock
+Route::get('relay-state', [NodeDataController::class, 'getEnergyState']); // Dibaca esp untuk mengubah state Relay Contactor
 
 /* API untuk menampilkan chart di statistics */
 Route::get('energyStat', [NodeDataController::class, 'energyStatistik'])->name('energyStatistik');
@@ -56,33 +57,33 @@ Route::get('cek-api', [NodeDataController::class, 'cekApi']);
     ==============
 */
 
-// API SENSOR DHT 
-Route::get('DhtSensor', [SensorDataController::class, 'getDhtExtra'])->name('getDhtExtra');
+// // API SENSOR DHT 
+// Route::get('DhtSensor', [SensorDataController::class, 'getDhtExtra'])->name('getDhtExtra');
 // Route::post('DhtSensor', [SensorDataController::class, 'postDhtExtra'])->name('postDhtExtra'); // Untuk Sensor DHT Tambahan
 
-// API FIRE ALARM
-Route::get('FireAlarm', [SensorDataController::class, 'getAllFireAlarm'])->name('getAllFireAlarm');
+// // API FIRE ALARM
+// Route::get('FireAlarm', [SensorDataController::class, 'getAllFireAlarm'])->name('getAllFireAlarm');
 
-// API LAMPU
-Route::get('ApiLight', [SensorDataController::class, 'getLightAll'])->name('getLightAll');
+// // API LAMPU
+// Route::get('ApiLight', [SensorDataController::class, 'getLightAll'])->name('getLightAll');
 
-// API ENERGY
-Route::get('ApiEnergy/{id}', [SensorDataController::class, 'getData']);
-Route::delete('ApiEnergy/{id}', [SensorDataController::class, 'deleteData']);
+// // API ENERGY
+// Route::get('ApiEnergy/{id}', [SensorDataController::class, 'getData']);
+// Route::delete('ApiEnergy/{id}', [SensorDataController::class, 'deleteData']);
 
-// API Energy Devices
-Route::get('OutletMaster', [SensorDataController::class, 'getAllOutletMaster'])->name('getAllOutletMaster');
-Route::get('OutletMaster/{id}', [SensorDataController::class, 'getOutletMaster'])->name('getOutletMaster');
-Route::post('OutletMaster/{id}', [SensorDataController::class, 'updateOutletMaster'])->name('postOutletMaster');
-Route::get('PanelMaster', [SensorDataController::class, 'getAllPanelMaster'])->name('getAllPanelMaster');
-Route::get('PanelMaster/{id}', [SensorDataController::class, 'getPanelMaster'])->name('getPanelMaster');
-Route::post('PanelMaster/{id}', [SensorDataController::class, 'updatePanelMaster'])->name('postPanelMaster');
-Route::get('Outlet', [SensorDataController::class, 'getAllOutlet'])->name('getAllOutlet');
-Route::get('Outlet/{id}', [SensorDataController::class, 'getOutlet'])->name('getOutlet');
-Route::post('Outlet/{id}', [SensorDataController::class, 'updateOutlet'])->name('postOutlet');
-Route::get('Panel', [SensorDataController::class, 'getAllPanel'])->name('getAllPanel');
-Route::get('Panel/{id}', [SensorDataController::class, 'getPanel'])->name('getPanel');
-Route::post('Panel/{id}', [SensorDataController::class, 'updatePanel'])->name('postPanel');
+// // API Energy Devices
+// Route::get('OutletMaster', [SensorDataController::class, 'getAllOutletMaster'])->name('getAllOutletMaster');
+// Route::get('OutletMaster/{id}', [SensorDataController::class, 'getOutletMaster'])->name('getOutletMaster');
+// Route::post('OutletMaster/{id}', [SensorDataController::class, 'updateOutletMaster'])->name('postOutletMaster');
+// Route::get('PanelMaster', [SensorDataController::class, 'getAllPanelMaster'])->name('getAllPanelMaster');
+// Route::get('PanelMaster/{id}', [SensorDataController::class, 'getPanelMaster'])->name('getPanelMaster');
+// Route::post('PanelMaster/{id}', [SensorDataController::class, 'updatePanelMaster'])->name('postPanelMaster');
+// Route::get('Outlet', [SensorDataController::class, 'getAllOutlet'])->name('getAllOutlet');
+// Route::get('Outlet/{id}', [SensorDataController::class, 'getOutlet'])->name('getOutlet');
+// Route::post('Outlet/{id}', [SensorDataController::class, 'updateOutlet'])->name('postOutlet');
+// Route::get('Panel', [SensorDataController::class, 'getAllPanel'])->name('getAllPanel');
+// Route::get('Panel/{id}', [SensorDataController::class, 'getPanel'])->name('getPanel');
+// Route::post('Panel/{id}', [SensorDataController::class, 'updatePanel'])->name('postPanel');
 
 /* 
 // Digunakan kalau ada sensor Suhu dan Kelembapan Lagi

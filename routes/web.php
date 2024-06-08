@@ -6,6 +6,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\EnergyController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\EnergyPanelController;
 
 /* Diurutkat sesuai SIDEBAR */
 
@@ -21,12 +22,11 @@ Route::get('/dashboard', [PagesController::class, 'wasLogin']);
 
 //digunakan untuk mengatur hal hal yang berkaitan dengan halaman energy monitoring
 Route::get('/monitor', [EnergyController::class, 'monitor']);
-Route::get('/statistic', [EnergyController::class, 'energyStat']);
-Route::get('/control', [EnergyController::class, 'showData']);
-Route::get('/control-change-status-panel-master/{id}', [EnergyController::class, 'changePanelMaster']);
-Route::get('/control-change-status-panel/{id}', [EnergyController::class, 'changePanel']);
-// Route::get('/control-change-status-outlet-master/{id}', [EnergyController::class, 'changeOutletMaster']);
-// Route::get('/control-change-status-outlet/{id}', [EnergyController::class, 'changeOutlet']);
+Route::get('/control', [EnergyController::class, 'control']);
+Route::get('/statistic', [EnergyController::class, 'stats']);
+Route::get('/control-change-status-panel/{id}', [EnergyPanelController::class, 'changePanel']);
+// Route::get('/control-change-status-panel-master/{id}', [EnergyController::class, 'changePanelMaster']);
+
 Route::get('/energyexportxlxs', [EnergyController::class, 'export_excel']);
 Route::get('/energyexportcsv', [EnergyController::class, 'export_excel_csv']);
 
@@ -85,11 +85,11 @@ Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/proses_login', [AuthController::class, 'proses_login'])->name('proses_login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::group(['middleware' => ['auth']], function () {
-    Route::group(['middleware' => ['cek_login:admin']], function () {
-        Route::resource('admin', \App\Http\Controllers\DashboardController::class);
-    });
-    Route::group(['middleware' => ['cek_login:editor']], function () {
-        Route::resource('editor', \App\Http\Controllers\DashboardController::class);
-    });
-});
+// Route::group(['middleware' => ['auth']], function () {
+//     Route::group(['middleware' => ['cek_login:admin']], function () {
+//         Route::resource('admin', \App\Http\Controllers\DashboardController::class);
+//     });
+//     Route::group(['middleware' => ['cek_login:editor']], function () {
+//         Route::resource('editor', \App\Http\Controllers\DashboardController::class);
+//     });
+// });

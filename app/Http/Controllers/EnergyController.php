@@ -3,30 +3,19 @@
 namespace App\Http\Controllers;
 
 use DB;
-use App\Models\About;
 use App\Models\Light;
-use App\Models\Driver;
 use App\Models\Energy;
+use App\Models\EnergyKwh;
 use App\Models\EnergyCost;
 use App\Models\EnergyPanel;
-use App\Models\LightMaster;
-use App\Models\EnergyOutlet;
-use Illuminate\Http\Request;
 use App\Exports\EnergyExport;
 use Illuminate\Support\Carbon;
 use App\Models\EnergyPanelMaster;
-use App\Models\EnergyOutletMaster;
-use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EnergyController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function monitor()
     {
         $todayDate = Carbon::today()->toDateString(); // return Y-m-d string
@@ -46,18 +35,17 @@ class EnergyController extends Controller
         $energyYesterday = 0;
         for ($i = 1; $i <= 4; $i++) {
             try {
-                $eachYesterday = Energy::where('id_kwh', $i)->whereDate('created_at', $yesterdayDate)->latest()->first()->energy;
-                $eachKwh = Energy::where('id_kwh', $i)->whereDate('created_at', $todayDate)->latest()->first()->energy;
+                $eachYesterday = EnergyKwh::where('id_kwh', $i)->whereDate('created_at', $yesterdayDate)->latest()->first()->energy;
+                $eachKwh = EnergyKwh::where('id_kwh', $i)->whereDate('created_at', $todayDate)->latest()->first()->energy;
             } catch (\Throwable $th) {
-                $eachYesterday = Energy::where('id_kwh', $i)->latest()->first()->energy;
-                $eachKwh = Energy::where('id_kwh', $i)->latest()->first()->energy;
+                // Jika today data tidak ada, maka ambil data terakhir yang ada
+                $eachYesterday = EnergyKwh::where('id_kwh', $i)->latest()->first()->energy;
+                $eachKwh = EnergyKwh::where('id_kwh', $i)->latest()->first()->energy;
             }
 
             $energyYesterday += $eachYesterday;
 
-            // Energi terbaru hari ini - energi terakhir hari kemarin
             $todayWh = $eachKwh - $eachYesterday;
-            // echo ($eachKwh . ' ' . $todayWh . ' ' . '' . $eachYesterday);
             $eachTodayEnergy->push($todayWh);
         }
         $energy_today = ($energyTillNow - $energyYesterday) / 1000;
@@ -66,7 +54,7 @@ class EnergyController extends Controller
         $energyLastMonth = 0;
         for ($i = 1; $i <= 4; $i++) {
             try {
-                $eachLastMonth = Energy::where('id_kwh', $i)->whereMonth('created_at', $lastMonth)->whereYear('created_at', $thisYear)->latest()->first()->energy;
+                $eachLastMonth = EnergyKwh::where('id_kwh', $i)->whereMonth('created_at', $lastMonth)->whereYear('created_at', $thisYear)->latest()->first()->energy;
             } catch (\Exception $e) {
                 // Jika data bulan yang lalu belum ada, maka dianggap 0
                 $eachLastMonth = 0;
@@ -123,136 +111,324 @@ class EnergyController extends Controller
         ));
     }
 
-    public function energyStat()
+    public function control()
     {
-        $price = DB::select('SELECT month(energies.created_at)as month,year(energies.created_at)as tahun,SUM(energies.active_power*(energy_costs.delay/3600)) AS result,SUM(energies.active_power*energy_costs.harga) AS harga FROM energies JOIN energy_costs WHERE id_kwh = 1 GROUP BY month(energies.created_at) DESC,year(energies.created_at) DESC');
+        $energy_panel = EnergyPanel::oldest()->get();
 
-        // dd($price);
-        return view('energy.statistic', compact('price'))->with('i', (request()->input('page', 1) - 1) * 5);
+        return view('energy.control', compact('energy_panel'));
     }
 
-    //panel list
-    public function storePanelList(Request $request)
+    public function stats()
     {
+        // Biaya bulanan hanya untuk kWh 4 (master)
+        $monthlyKwh = $this->getMonthlyEnergy(4);
+        // dd($monthlyKwh);
 
-        request()->validate(
-            [
-                'nama' => 'required',
-
-            ]
-        );
-
-        $data = new EnergyPanel;
-        $data->nama = $request->nama;
-        $data->status = $request->status;
-
-        $data->save();
-
-        return redirect('daftar-sensor');
+        return view('energy.statistic', compact('monthlyKwh'));
     }
 
-    public function showPanelList($id)
+    public function getDailyEnergy($id)
     {
-        $panelshow = EnergyPanel::where('id', $id)->get();
-        $about = About::oldest()->get();
-        return view('admin.sensor.panelshow', compact('panelshow', 'about'));
-    }
+        if ($id > 4) {
+            abort(404);
+        }
 
-    public function updatePanelList(Request $request)
-    {
-        //
-        $id = $request->get('id');
-        $nama = $request->get('nama-edit');
-
-        $data = EnergyPanel::where('id', $id)->update(array(
-            'nama' => $nama
-        ));
-
-        return redirect('daftar-sensor');
-    }
-
-    public function deletePanelList($id)
-    {
-        $data = EnergyPanel::findorfail($id);
-        $data->delete();
-
-        return redirect('daftar-sensor');
-    }
-    public function editPanelList($id)
-    {
-        $editpanel = EnergyPanel::select('*')
-            ->where('id', $id)
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated')
+            ->where('id_kwh', '=', $id)
+            ->groupBy('id_kwh', 'date')
+            ->latest('latest_updated')
             ->get();
 
-        return view('admin.sensor.paneledit', compact('editpanel'));
+        foreach ($data as $item) {
+            $energy = EnergyKwh::select('total_energy')
+                ->where('id_kwh', $id)
+                ->whereDate('created_at', $item->date)
+                ->latest('created_at')
+                ->first();
+
+            $item->energy_meter = $energy->total_energy;
+        }
+
+        $length = count($data);
+
+        for ($i = 0; $i < $length - 1; $i++) {
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
+            $angka_ike = number_format($data[$i]->today_energy * 30 / 1000 / 33.1, 2); // dikali 30 agar memakai standar perbulan | 33,1 luas ruangan IoT
+            $data[$i]->angka_ike = $angka_ike;
+            switch ($angka_ike) {
+                case $angka_ike <= 7.92:
+                    $ike = 'Sangat Efisien';
+                    $color = '#00ff00';
+                    break;
+                case $angka_ike > 7.92 && $angka_ike <= 12.08:
+                    $ike = 'Efisien';
+                    $color = '#009900';
+                    break;
+                case $angka_ike > 12.08 && $angka_ike <= 14.58:
+                    $ike = 'Cukup Efisien';
+                    $color = '#ffff00';
+                    break;
+                case $angka_ike > 14.58 && $angka_ike <= 19.17:
+                    $ike = 'Agak Boros';
+                    $color = '#ff9900';
+                    break;
+                case $angka_ike > 19.17 && $angka_ike <= 23.75:
+                    $ike = 'Boros';
+                    $color = '#ff3300';
+                    break;
+                default:
+                    $ike = 'Sangat Boros';
+                    $color = '#800000';
+                    break;
+            }
+            $data[$i]->ike = $ike;
+            $data[$i]->color = $color;
+        }
+
+        // Remove the last item from the collection since there is no next day for the last day
+        $data->pop();
+
+        return $data;
     }
 
-    //outlet list
-    public function storeOutletList(Request $request)
+    public function getDailyEnergyReversed($id)
     {
-
-        request()->validate(
-            [
-                'nama' => 'required',
-
-            ]
-        );
-
-        $data = new EnergyOutlet;
-        $data->nama = $request->nama;
-        $data->status = $request->status;
-
-        $data->save();
-
-        return redirect('daftar-sensor');
-    }
-
-    public function showOutletList($id)
-    {
-        $outletshow = EnergyOutlet::where('id', $id)->get();
-        $about = About::oldest()->get();
-        return view('admin.sensor.outletshow', compact('outletshow', 'about'));
-    }
-
-    public function updateOutletList(Request $request)
-    {
-        //
-        $id = $request->get('id');
-        $nama = $request->get('nama-edit');
-
-        $data = EnergyOutlet::where('id', $id)->update(array(
-            'nama' => $nama
-        ));
-
-        return redirect('daftar-sensor');
-    }
-
-    public function deleteOutletList($id)
-    {
-        $data = EnergyOutlet::findorfail($id);
-        $data->delete();
-
-        return redirect('daftar-sensor');
-    }
-    public function editOutletList($id)
-    {
-        $editoutlet = EnergyOutlet::select('*')
-            ->where('id', $id)
+        if ($id > 4) {
+            abort(404);
+        }
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated')
+            ->where('id_kwh', '=', $id)
+            ->groupBy('id_kwh', 'date')
+            ->oldest('latest_updated')
             ->get();
 
-        return view('admin.sensor.outletedit', compact('editoutlet'));
+        foreach ($data as $item) {
+            $energy = EnergyKwh::select('total_energy', 'created_at')
+                ->where('id_kwh', $id)
+                ->whereDate('created_at', $item->date)
+                ->latest('created_at')
+                ->first();
+
+            $item->energy_meter = $energy->total_energy;
+            $item->timestamp = strtotime($energy->created_at) * 1000;
+        }
+
+
+        $length = count($data);
+
+        for ($i = 1; $i < $length; $i++) {
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i - 1]->energy_meter;
+        }
+
+        // Menghilangkan data paling awal karena digunakan untuk pengurangan
+        $data->shift();
+
+        return $data;
     }
-    public function showOutletMasterList($id)
+
+    public function getDailyEnergyStat($id)
     {
-        $outletshow = EnergyOutletMaster::where('id', $id)->get();
-        $about = About::oldest()->get();
-        return view('admin.sensor.outletmastershow', compact('outletshow', 'about'));
+        if ($id > 4) {
+            return response()->json(['message' => 'Not Found'], 404);
+        }
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated')
+            ->where('id_kwh', '=', $id)
+            ->groupBy('id_kwh', 'date')
+            ->latest('latest_updated')
+            ->limit(101)->get();
+
+        foreach ($data as $item) {
+            $energy = EnergyKwh::select('total_energy')
+                ->where('id_kwh', $id)
+                ->whereDate('created_at', $item->date)
+                ->latest('created_at') // Pilih baris terbaru
+                ->first();
+
+            $item->energy_meter = $energy->total_energy;
+        }
+
+        $length = count($data);
+
+        for ($i = 0; $i < $length - 1; $i++) {
+            $data[$i]->energy = ($data[$i]->energy_meter - $data[$i + 1]->energy_meter) / 1000;
+        }
+
+        $data->makeHidden('energy_meter');
+        $data->makeHidden('latest_updated');
+        // Remove the last item from the collection since there is no next day for the last day
+        $data->pop();
+
+        return $data;
     }
-    public function showPanelMasterList($id)
+
+    public function getMonthlyEnergy($id)
     {
-        $outletshow = EnergyPanelMaster::where('id', $id)->get();
-        $about = About::oldest()->get();
-        return view('admin.sensor.panelmastershow', compact('outletshow', 'about'));
+        // Versi Mario
+        $data = EnergyKwh::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as total_energy')
+            ->where('id_kwh', '=', $id)
+            ->groupBy('month', 'tahun')
+            ->oldest('latest_updated')
+            ->get();
+        $price = EnergyCost::latest()->first()->harga;
+
+        $length = count($data);
+        // $data[$length-1]->monthly_kwh = ($data[$length-1]->energy_meter - 6950)/1000; // pertama kali pasang di 30 des dengan kwh meter start dari 6950
+
+        for ($i = 1; $i < $length; $i++) {
+            $data[$i]->monthly_kwh = ($data[$i]->total_energy - $data[$i - 1]->total_energy) / 1000; // energy perbulan dalam kWh
+            $data[$i]->bill = intval($data[$i]->monthly_kwh * $price); // biaya listrik perbulan
+            $angka_ike = $data[$i]->monthly_kwh / 33.1;
+            $data[$i]->angka_ike = round($angka_ike, 2);
+            switch ($angka_ike) {
+                case $angka_ike <= 7.92:
+                    $ike = 'Sangat Efisien';
+                    $color = '#00ff00';
+                    break;
+                case $angka_ike > 7.92 && $angka_ike <= 12.08:
+                    $ike = 'Efisien';
+                    $color = '#009900';
+                    break;
+                case $angka_ike > 12.08 && $angka_ike <= 14.58:
+                    $ike = 'Cukup Efisien';
+                    $color = '#ffff00';
+                    break;
+                case $angka_ike > 14.58 && $angka_ike <= 19.17:
+                    $ike = 'Agak Boros';
+                    $color = '#ff9900';
+                    break;
+                case $angka_ike > 19.17 && $angka_ike <= 23.75:
+                    $ike = 'Boros';
+                    $color = '#ff3300';
+                    break;
+                default:
+                    $ike = 'Sangat Boros';
+                    $color = '#800000';
+                    break;
+            }
+            $data[$i]->ike = $ike;
+            $data[$i]->color = $color;
+            $data[$i]->bulan = Carbon::create(null, $data[$i]->month)->monthName;
+        }
+
+        // Remove the last item from the collection since there is no next day for the last day
+        $data->shift();
+
+        $data->makeHidden(['energy_meter']);
+
+        return $data;
+    }
+
+    public function getMonthlyEnergyStat($id)
+    {
+        $data = EnergyKwh::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as total_energy')
+            ->where('id_kwh', '=', $id)
+            ->groupBy('month', 'tahun')
+            ->latest('latest_updated')
+            ->get();
+
+        $price = EnergyCost::latest()->first()->pokok;
+
+        $length = count($data);
+
+        for ($i = 0; $i < $length - 1; $i++) {
+            $data[$i]->monthly_kwh = ($data[$i]->total_energy - $data[$i + 1]->total_energy) / 1000; // energy perbulan dalam kWh
+            $angka_ike = $data[$i]->monthly_kwh / 33.1;
+            $data[$i]->angka_ike = round($angka_ike, 2);
+            switch ($angka_ike) {
+                case $angka_ike <= 7.92:
+                    $ike = 'Sangat Efisien';
+                    $color = '#00ff00';
+                    break;
+                case $angka_ike > 7.92 && $angka_ike <= 12.08:
+                    $ike = 'Efisien';
+                    $color = '#009900';
+                    break;
+                case $angka_ike > 12.08 && $angka_ike <= 14.58:
+                    $ike = 'Cukup Efisien';
+                    $color = '#ffff00';
+                    break;
+                case $angka_ike > 14.58 && $angka_ike <= 19.17:
+                    $ike = 'Agak Boros';
+                    $color = '#ff9900';
+                    break;
+                case $angka_ike > 19.17 && $angka_ike <= 23.75:
+                    $ike = 'Boros';
+                    $color = '#ff3300';
+                    break;
+                default:
+                    $ike = 'Sangat Boros';
+                    $color = '#800000';
+                    break;
+            }
+            $data[$i]->ike = $ike;
+            $data[$i]->color = $color;
+        }
+
+        // Remove the last item from the collection since there is no next day for the last day
+        $data->pop();
+
+        $data->makeHidden(['total_energy', 'latest_updated']);
+
+        return $data;
+    }
+
+    public function getAnnualEnergy($id)
+    {
+        $data = EnergyKwh::selectRaw('YEAR(created_at) as tahun, MAX(created_at) as latest_updated')
+            ->where('id_kwh', '=', $id)
+            ->groupBy('id_kwh', 'tahun')
+            ->oldest('latest_updated')
+            ->get();
+
+
+        foreach ($data as $item) {
+            $energy = EnergyKwh::select('total_energy', 'created_at')
+                ->where('id_kwh', $id)
+                ->where('created_at', $item->latest_updated)
+                ->latest('created_at')
+                ->first();
+
+            $item->energy_meter = $energy->total_energy / 1000;
+            $item->timestamp = strtotime($energy->created_at) * 1000;
+        }
+
+        $length = count($data);
+        for ($i = 1; $i < $length; $i++) {
+            $data[$i]->annual_kwh = $data[$i]->energy_meter - $data[$i - 1]->energy_meter;
+            $angka_ike = $data[$i]->annual_kwh / 33.1;
+            $data[$i]->angka_ike = $angka_ike;
+            switch ($angka_ike) {
+                case $angka_ike <= 95:
+                    $ike = 'Sangat Efisien';
+                    $color = '#00ff00';
+                    break;
+                case $angka_ike > 95 && $angka_ike <= 145:
+                    $ike = 'Efisien';
+                    $color = '#009900';
+                    break;
+                case $angka_ike > 145 && $angka_ike <= 175:
+                    $ike = 'Cukup Efisien';
+                    $color = '#ffff00';
+                    break;
+                case $angka_ike > 175 && $angka_ike <= 285:
+                    $ike = 'Agak Boros';
+                    $color = '#ff9900';
+                    break;
+                case $angka_ike > 285 && $angka_ike <= 450:
+                    $ike = 'Boros';
+                    $color = '#ff3300';
+                    break;
+                default:
+                    $ike = 'Sangat Boros';
+                    $color = '#800000';
+                    break;
+            }
+            $data[$i]->ike = $ike;
+            $data[$i]->color = $color;
+        }
+        $data->shift();
+
+        return $data;
     }
 
     public function export_excel()
@@ -262,79 +438,5 @@ class EnergyController extends Controller
     public function export_excel_csv()
     {
         return Excel::download(new EnergyExport, 'energy.csv');
-    }
-
-    public function showData()
-    {
-        $energy_panel_master = EnergyPanelMaster::oldest()->Paginate(10);
-        $energy_panel = EnergyPanel::oldest()->Paginate(10);
-        $lights = Light::latest()->Paginate(4);
-
-        return view('energy.control', compact('energy_panel_master', 'energy_panel', 'lights'));
-    }
-    public function changePanelMaster($id)
-    {
-        $getStatus = EnergyPanelMaster::select('status')->where('id', $id)->first();
-        if ($getStatus->status == 1) {
-            $status = 0;
-        } else {
-            $status = 1;
-        }
-        EnergyPanelMaster::where('id', $id)->update(['status' => $status]);
-        EnergyOutletMaster::query()->update(['status' => $status]);
-        EnergyOutlet::query()->update(['status' => $status]);
-        EnergyPanel::query()->update(['status' => $status]);
-        Light::query()->update(['status' => $status]);
-        LightMaster::query()->update(['status' => $status]);
-        return back();
-    }
-
-    public function changeOutletMaster($id)
-    {
-        $getStatus = EnergyOutletMaster::select('status')->where('id', $id)->first();
-        if ($getStatus->status == 1) {
-            $status = 0;
-        } else {
-            $status = 1;
-        }
-        EnergyOutletMaster::where('id', $id)->update(['status' => $status]);
-        EnergyOutlet::query()->update(['status' => $status]);
-        return back();
-    }
-
-    public function changePanel($id)
-    {
-        $getStatus = EnergyPanel::where('id', $id)->first();
-
-        if ($getStatus->nama == 'Lampu') {
-            if ($getStatus->status == 1) {
-                $status = 0;
-            } else {
-                $status = 1;
-            }
-            EnergyPanel::where('id', $id)->update(['status' => $status]);
-            LightMaster::where('id', 1)->update(['status' => $status]);
-            return back();
-        } else {
-            if ($getStatus->status == 1) {
-                $status = 0;
-            } else {
-                $status = 1;
-            }
-            EnergyPanel::where('id', $id)->update(['status' => $status]);
-            return back();
-        }
-    }
-
-    public function changeOutlet($id)
-    {
-        $getStatus = EnergyOutlet::select('status')->where('id', $id)->first();
-        if ($getStatus->status == 1) {
-            $status = 0;
-        } else {
-            $status = 1;
-        }
-        EnergyOutlet::where('id', $id)->update(['status' => $status]);
-        return back();
     }
 }

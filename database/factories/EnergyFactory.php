@@ -14,11 +14,7 @@ class EnergyFactory extends Factory
      */
     public function definition()
     {
-        static $energyValue = 100; // Set the initial energy value
-        static $selisihEnergy = 0;
         static $id_kwh = 0;
-        $selisihEnergy = $this->faker->randomFloat(2, 0, 2);;
-        $energyValue += $selisihEnergy;
 
         static $currentDateTime = null; // Initialize the currentDateTime
         $currentDateTime = $currentDateTime ?: $this->faker->dateTimeBetween('-2 days', 'now'); // Set the initial dateTime
@@ -39,7 +35,6 @@ class EnergyFactory extends Factory
             'active_power' => $this->faker->randomFloat(2, 0, 3),
             'reactive_power' => $this->faker->randomFloat(2, 0, 3),
             'apparent_power' => $this->faker->randomFloat(2, 0, 3),
-            'energy' => $energyValue,
             // 'created_at' => $this->faker->dateTimeInInterval('-2 month', '+2 month'),
             'created_at' => $currentDateTime,
         ];

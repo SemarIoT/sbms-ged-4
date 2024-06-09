@@ -55,6 +55,7 @@ class NodeDataController extends Controller
 
         // Hide the created_at and updated_at fields
         $formattedData->makeHidden(['created_at', 'updated_at']);
+
         return response($formattedData, 200);
     }
 
@@ -101,7 +102,7 @@ class NodeDataController extends Controller
     */
     public function getTotalEnergy()
     {
-        $data = EnergyKwh::latest()->get();
+        $data = EnergyKwh::latest()->limit(500)->get();
         $formattedData = $data->map(function ($item) {
             $item->created_at_formatted = $item->created_at->format('d M Y H:i:s');
             return $item;

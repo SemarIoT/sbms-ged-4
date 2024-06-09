@@ -8,66 +8,56 @@
     </div>
   </div>
   <div class="container-fluid">
-    <section>
+    <section class="mt-2 mb-0">
       <div class="container-fluid">
         <div class="row d-flex align-items-stretch">
           <div class="card">
             <div class="card-body">
-              <div class="row pb-2">
-                <h4 class="text-center">Grafik Konsumsi Energi Harian</h4>
+              <div class="row mb-2">
+                <h6 class="text-center">Grafik Konsumsi Energi Harian</h6>
               </div>
-              <div id="stockChartContainer" style="height: 400px; width: 100%;"></div>
-              <div class="mt-3">
-                <a class="btn btn-success " href="energyexportxlxs">Export xlxs</a>
-                <!-- <a class="btn btn-info " href="energyexportcsv">Export csv</a> -->
-              </div>
+              <div id="stockChartContainer" style="height: 300px; width: 100%;"></div>
             </div>
           </div>
-          <div class="card">
+          <div class="card py-0">
             <div class="card-body">
-              <div class="row pb-2">
-                <h4 class="text-center">Grafik Konsumsi Energi Bulanan</h4>
+              <div class="row mb-2">
+                <h6 class="text-center">Grafik Konsumsi Energi Bulanan</h6>
               </div>
-              <div id="monthlyChartContainer" style="height: 400px; width: 100%;"></div>
-              <div class="mt-3">
-                <a class="btn btn-success " href="energyexportxlxs">Export xlxs</a>
-                <!-- <a class="btn btn-info " href="energyexportcsv">Export csv</a> -->
-              </div>
+              <div id="monthlyChartContainer" style="height: 15vmax; width: 100%;"></div>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <section class="pt-2 mt-0">
+
+    <section class="mt-2">
       <div class="container-fluid">
         <div class="row d-flex align-items-stretch">
-          <div class="col-lg">
-            <div class="card">
-              <div class="card-body">
-                <div class="row">
-                  <h3 class="h4 mb-3 ">Usage Data</h3>
-                </div>
-                <table class="table table-striped table-hover">
-                  <tr>
-                    <th class="text-center" width="160px">Bulan</th>
-                    <th class="text-center" width="160px">Tahun</th>
-                    <th class="text-center">Energi (KWH)</th>
-                    <th class="text-center" width="40px"></th>
-                    <th class="text-center">Total</th>
-                  </tr>
-                  @foreach ($monthlyKwh as $item)
-                  <tr>
-                    <td class="text-center">{{$item->month}}</td>
-                    <td class="text-center">{{$item->tahun}}</td>
-                    <td class="text-center">@php echo number_format((float)$item->monthly_kwh,2,'.',''); @endphp</td>
-                    <td class="text-end">Rp.</td>
-                    <td class="text-end">@php echo number_format($item->bill); @endphp</td>
-                  </tr>
-                  @endforeach
-                </table>
-
-
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <h6 class="mb-3 ">Usage Data</h6>
               </div>
+              <table class="table table-striped table-hover">
+                <tr>
+                  <th class="text-center" width="160px">Bulan</th>
+                  <th class="text-center" width="160px">Tahun</th>
+                  <th class="text-center">Energi (KWH)</th>
+                  <th class="text-center" width="40px"></th>
+                  <th class="text-center">Total</th>
+                </tr>
+                @foreach ($monthlyKwh as $item)
+                <tr>
+                  <td class="text-center">{{$item->month}}</td>
+                  <td class="text-center">{{$item->tahun}}</td>
+                  <td class="text-center">@php echo number_format((float)$item->monthly_kwh,2,'.','');
+                    @endphp</td>
+                  <td class="text-end">Rp.</td>
+                  <td class="text-end">@php echo number_format($item->bill); @endphp</td>
+                </tr>
+                @endforeach
+              </table>
             </div>
           </div>
         </div>
@@ -216,7 +206,6 @@
 </script>
 
 
-</body>
 @stop
 
 </html>

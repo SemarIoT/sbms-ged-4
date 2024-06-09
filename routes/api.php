@@ -6,6 +6,7 @@ use App\Http\Controllers\SensorDataController;
 use App\Http\Controllers\DoorlockStateController;
 use App\Http\Controllers\EnergyController;
 use App\Http\Controllers\NodeDataController;
+use App\Http\Controllers\StatsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,13 +35,17 @@ Route::get('daily-energy/{id}', [EnergyController::class, 'getDailyEnergy']); //
 Route::get('daily-energy-reversed/{id}', [EnergyController::class, 'getDailyEnergyReversed']); // 'total_energy' harian terbalik
 Route::get('monthly-energy/{id}', [EnergyController::class, 'getMonthlyEnergy']); // 'total_energy' bulanan
 Route::get('annual-energy/{id}', [EnergyController::class, 'getAnnualEnergy']); // 'total_energy' tahunan
-Route::get('daily-stat/{id}', [EnergyController::class, 'getDailyEnergyStat']); // 'total_energy' harian
-Route::get('monthly-stat/{id}', [EnergyController::class, 'getMonthlyEnergyStat']); // 'total_energy' bulanan
 
 /* ESP Control 4 Relay dan DHT */
 Route::get('relay-state', [NodeDataController::class, 'getEnergyState']); // Dibaca esp untuk mengubah state Relay Contactor
 
 /* API untuk menampilkan chart di statistics */
+Route::get('daily-stat/{id}', [StatsController::class, 'getDailyEnergyStat']); // 'total_energy' harian
+Route::get('monthly-stat/{id}', [StatsController::class, 'getMonthlyEnergyStat']); // 'total_energy' bulanan
+Route::get('arus-stat/{id}', [StatsController::class, 'getArusStat']);
+Route::get('active-stat/{id}', [StatsController::class, 'getActivePowerStat']);
+
+
 Route::get('energyStat', [NodeDataController::class, 'energyStatistik'])->name('energyStatistik');
 Route::get('suhulogger', [NodeDataController::class, 'suhulogger'])->name('suhulogger');
 Route::get('humidlogger', [NodeDataController::class, 'humidlogger'])->name('humidlogger');

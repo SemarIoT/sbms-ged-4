@@ -75,23 +75,6 @@
   </div>
 
   <hr class="sidebar-divider my-0">
-  <!-- <ul class="list-unstyled mb-0">
-    <li class="sidebar-item"><a class="sidebar-link" href="#authdropdown" data-bs-toggle="collapse">
-        <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-          <use xlink:href="#security-shield-1"> </use>
-        </svg><span>Access</span></a>
-      <ul class="collapse list-unstyled " id="authdropdown">
-        @if (Auth::user()->level == 'Developer' || Auth::user()->level == 'User' )
-        <li><a class="sidebar-link" href="https://iotlab-uns.com/smart-bms/public/" target="_blank"
-            rel="noopener noreferrer">IoT Lab</a></li>
-        <li><a class="sidebar-link" href="#">KESTL Lab</a></li>
-        @elseif(Auth::user()->level == 'Admin')
-        <li><a class="sidebar-link" href="#">KESTL Lab</a></li>
-        @endif
-      </ul>
-    </li>
-  </ul> -->
-  <hr class="sidebar-divider my-0">
   <ul class="list-unstyled">
     <li class="sidebar-item"><a class="sidebar-link" href="{{url('dashboard')}}">
         <svg class="svg-icon svg-icon-sm svg-icon-heavy">
@@ -111,6 +94,10 @@
         <svg class="svg-icon svg-icon-sm svg-icon-heavy">
           <use xlink:href="#stack-1"> </use>
         </svg><span>Statistic</span></a></li>
+    <li class="sidebar-item"><a class="sidebar-link" href="{{url('exports')}}">
+        <svg class="svg-icon svg-icon-sm svg-icon-heavy">
+          <use xlink:href="#browser-window-1"> </use>
+        </svg><span>Export Data </span></a></li>
     <hr class="sidebar-divider my-0">
     </nav>
 

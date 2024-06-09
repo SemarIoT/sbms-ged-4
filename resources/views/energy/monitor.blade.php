@@ -28,13 +28,13 @@
         @endif
         @endif
     </div>
-    <div class="container-fluid px-0 py-0 mt-0">
+    <div class="container-fluid px-0 py-0 mt-3">
         {{-- Section Each Energy --}}
-        <section class="mt-2">
+        <section class="pt-0 mt-0">
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-body">
-                        <h4>Today's Energy</h4>
+                        <h5>Today's Energy</h5>
                         <div class="row d-flex justify-content-between">
                             @php
                             $i=0
@@ -54,8 +54,9 @@
                 </div>
             </div>
         </section>
+
         {{-- Energy Usage and Cost --}}
-        <section class="mt-0 pt-0">
+        <!-- <section class="mt-0 pt-0">
             <div class="container-fluid">
                 <div class="row d-flex align-items-stretch gy-4">
                     <div class="col-lg-4">
@@ -120,55 +121,59 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         {{-- Overal Monitoring (Master) --}}
         <section class="pt-0 mt-0">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row d-flex justify-content-center">
-                                    <h3 class="h4 mb-4 mt-0">Overall Monitoring (Master)</h3>
-                                    <div class="row d-flex justify-content-between">
-                                        <div class="col-sm d-flex justify-content-between px-4">
-                                            <p class="text-lg text-dash-color-1">Voltage</p>
-                                            <p class="text-lg text-dash-color-1">{{ $avgVolt }} V</p>
-                                        </div>
-                                        <div class="col-sm d-flex justify-content-between px-4">
-                                            <p class="text-lg text-success">Current</p>
-                                            <p class="text-lg text-success">{{ $avgCurrent }} A</p>
-                                        </div>
-                                        <div class="col-sm d-flex justify-content-between px-4">
-                                            <p class="text-lg text-danger">Frequency</p>
-                                            <p class="text-lg text-danger">{{ $avgFreq }} Hz</p>
-                                        </div>
-                                    </div>
-                                    <div class="row d-flex justify-content-between">
-                                        <div class="col-sm d-flex justify-content-between px-4">
-                                            <p class="text-lg text-blue">Active Power</p>
-                                            <p class="text-lg text-blue">{{ $avgP }} W</p>
-                                        </div>
-                                        <div class="col-sm d-flex justify-content-between px-4">
-                                            <p class="text-lg text-gold">Reactive Power</p>
-                                            <p class="text-lg text-gold">{{ $avgQ }} VAR</p>
-                                        </div>
-                                        <div class="col-sm d-flex justify-content-between px-4">
-                                            <p class="text-lg text-dash-color-4">Apparent Power</p>
-                                            <p class="text-lg text-dash-color-4">{{ $avgS }} VA</p>
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="mb-4 mt-0">Arus</h5>
+                        <div class="row d-flex justify-content-between">
+                            @php
+                            $i = 1;
+                            @endphp
+                            @foreach ($devicesPanel as $energy_panel)
+                            <div class="col-md d-flex justify-content-around">
+                                <p class="text-md text-start">{{$energy_panel->nama}} :</p>
+                                <p class="text-md mb-0 text-danger text-end">{{
+                                    $energiesCollection[$i]->arus
+                                    }} <span class="text-success mb-0">A</span></p>
                             </div>
+                            @endforeach
                         </div>
+                        <div id="arusChart" style="height: 300px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="pt-0 mt-0">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="mb-4 mt-0">Daya Aktif</h5>
+                        <div class="row d-flex justify-content-between">
+                            @php
+                            $i = 1;
+                            @endphp
+                            @foreach ($devicesPanel as $energy_panel)
+                            <div class="col-md d-flex justify-content-around">
+                                <p class="text-md text-start">{{$energy_panel->nama}} :</p>
+                                <p class="text-md mb-0 text-danger text-end">{{
+                                    $energiesCollection[$i]->active_power
+                                    }} <span class="text-success mb-0">kW</span></p>
+                            </div>
+                            @endforeach
+                        </div>
+                        <div id="activeChart" style="height: 300px; width: 100%;"></div>
                     </div>
                 </div>
             </div>
         </section>
 
+
         {{-- Detail Monitoring --}}
-        <section class="mt-3 pt-0">
+        <section class="mt-0 pt-0">
             <div class="container-fluid">
                 <div class="row d-flex align-items-stretch gy-4">
                     <div class="col-lg-4">
@@ -294,8 +299,170 @@
                 </div>
             </div>
         </section>
-
     </div>
 </div>
+
+<script type="text/javascript" src="{{asset('js/linechartcanvas.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/linechartcanvasjquery.js')}}"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+
+<script type="text/javascript">
+    window.onload = function () {
+        var a1 = [];
+        var a2 = [];
+        var a3 = [];
+        var a4 = [];
+
+        var p1 = [];
+        var p2 = [];
+        var p3 = [];
+        var p4 = [];
+
+        var arusChart = new CanvasJS.StockChart("arusChart", {
+            theme: "light2",
+            exportEnabled: true,
+            charts: [{
+                axisX: {
+                    crosshair: {
+                        enabled: true,
+                        snapToDataPoint: true
+                    }
+                },
+                axisY: {
+                    prefix: "",
+                    crosshair: {
+                        enabled: true,
+                        snapToDataPoint: true,
+                        valueFormatString: "#0.##"
+                    }
+                },
+                toolTip: {
+                    shared: true
+                },
+                data: [{
+                    type: "line",
+                    name: "Lantai 1",
+                    yValueFormatString: "#0.## A",
+                    dataPoints: a1
+                }, {
+                    type: "line",
+                    name: "Lantai 2",
+                    yValueFormatString: "#0.## A",
+                    dataPoints: a2
+                }, {
+                    type: "line",
+                    name: "Lantai 3",
+                    yValueFormatString: "#0.## A",
+                    dataPoints: a3
+                }, {
+                    type: "line",
+                    name: "Master",
+                    yValueFormatString: "#0.## A",
+                    dataPoints: a4
+                }]
+            }],
+            navigator: {
+                slider: {}
+            }
+        });
+        $.getJSON("api/arus-stat/1", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a1.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            arusChart.render();
+            console.log(a1);
+        });
+        $.getJSON("api/arus-stat/2", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a2.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            arusChart.render();
+        });
+        $.getJSON("api/arus-stat/3", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a3.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            arusChart.render();
+        });
+        $.getJSON("api/arus-stat/4", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a4.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            arusChart.render();
+        });
+        var activeChart = new CanvasJS.StockChart("activeChart", {
+            theme: "light2",
+            exportEnabled: true,
+            charts: [{
+                axisX: {
+                    crosshair: {
+                        enabled: true,
+                        snapToDataPoint: true
+                    }
+                },
+                axisY: {
+                    prefix: "",
+                    crosshair: {
+                        enabled: true,
+                        snapToDataPoint: true,
+                        valueFormatString: "#0.##"
+                    }
+                },
+                toolTip: {
+                    shared: true
+                },
+                data: [{
+                    type: "line",
+                    name: "Lantai 1",
+                    yValueFormatString: "#0.## kW",
+                    dataPoints: a1
+                }, {
+                    type: "line",
+                    name: "Lantai 2",
+                    yValueFormatString: "#0.## kW",
+                    dataPoints: a2
+                }, {
+                    type: "line",
+                    name: "Lantai 3",
+                    yValueFormatString: "#0.## kW",
+                    dataPoints: a3
+                }, {
+                    type: "line",
+                    name: "Master",
+                    yValueFormatString: "#0.## kW",
+                    dataPoints: a4
+                }]
+            }],
+            navigator: {
+                slider: {}
+            }
+        });
+        $.getJSON("api/active-stat/1", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a1.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            activeChart.render();
+            console.log(a1);
+        });
+        $.getJSON("api/active-stat/2", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a2.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            activeChart.render();
+        });
+        $.getJSON("api/active-stat/3", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a3.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            activeChart.render();
+        });
+        $.getJSON("api/active-stat/4", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                a4.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+            }
+            activeChart.render();
+        });
+    }
+</script>
 
 @stop

@@ -24,10 +24,14 @@ Route::get('/dashboard', [PagesController::class, 'wasLogin']);
 Route::get('/monitor', [EnergyController::class, 'monitor']);
 Route::get('/control', [EnergyController::class, 'control']);
 Route::get('/statistic', [EnergyController::class, 'stats']);
+Route::get('/exports', [EnergyController::class, 'exports']);
+
+// Controlling Energy Panel
 Route::get('/control-change-status-panel/{id}', [EnergyPanelController::class, 'changePanel']);
 // Route::get('/control-change-status-panel-master/{id}', [EnergyController::class, 'changePanelMaster']);
 
-Route::get('/energyexportxlxs', [EnergyController::class, 'export_excel']);
+Route::get('/energies-xlsx', [EnergyController::class, 'exportEnergies']);
+Route::get('/kwh-xlsx', [EnergyController::class, 'exportKwh']);
 Route::get('/energyexportcsv', [EnergyController::class, 'export_excel_csv']);
 
 //digunakan untuk mengatur hal hal yang berkaitan dengan halaman about
@@ -37,7 +41,7 @@ Route::post('aboutupdate', [AboutController::class, 'aboutupdate'])->name('about
 
 //Profil page -> digunakan untuk mengatur hal hal yang berkaitan dengan halaman profile
 Route::get('/changePassword', [AuthController::class, 'showChangePasswordForm'])->name('changePassword');
-Route::post('/changePassword', [AuthController::class, 'changePassword'])->name('changePassword');
+Route::post('/changePassword', [AuthController::class, 'changePassword']);
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
 Route::get('showprofile/{id}', [AuthController::class, 'showprofile'])->name('showprofile');
 Route::post('updateprofile', [AuthController::class, 'updateprofile'])->name('updateprofile');

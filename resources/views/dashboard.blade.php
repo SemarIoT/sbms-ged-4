@@ -129,6 +129,46 @@
             </div>
         </section>
 
+        {{-- Overal Monitoring (Master) --}}
+        <section class="pt-0 mt-0">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row d-flex justify-content-center">
+                            <h3 class="h4 mb-4 mt-0">Overall Monitoring (Master)</h3>
+                            <div class="row d-flex justify-content-between">
+                                <div class="col-sm d-flex justify-content-between px-4">
+                                    <p class="text-lg text-dash-color-1">Voltage</p>
+                                    <p class="text-lg text-dash-color-1">{{ $avgVolt }} V</p>
+                                </div>
+                                <div class="col-sm d-flex justify-content-between px-4">
+                                    <p class="text-lg text-success">Current</p>
+                                    <p class="text-lg text-success">{{ $avgCurrent }} A</p>
+                                </div>
+                                <div class="col-sm d-flex justify-content-between px-4">
+                                    <p class="text-lg text-danger">Frequency</p>
+                                    <p class="text-lg text-danger">{{ $avgFreq }} Hz</p>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-between">
+                                <div class="col-sm d-flex justify-content-between px-4">
+                                    <p class="text-lg text-blue">Active Power</p>
+                                    <p class="text-lg text-blue">{{ $avgP }} W</p>
+                                </div>
+                                <div class="col-sm d-flex justify-content-between px-4">
+                                    <p class="text-lg text-gold">Reactive Power</p>
+                                    <p class="text-lg text-gold">{{ $avgQ }} VAR</p>
+                                </div>
+                                <div class="col-sm d-flex justify-content-between px-4">
+                                    <p class="text-lg text-dash-color-4">Apparent Power</p>
+                                    <p class="text-lg text-dash-color-4">{{ $avgS }} VA</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         {{-- Section Details --}}
         <section class="pt-0">

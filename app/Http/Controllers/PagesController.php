@@ -116,6 +116,13 @@ class PagesController extends Controller
             $energy_month = ($energyTillNow - $energyLastMonth) / 1000;
             $energy_cost = EnergyCost::latest()->pluck('harga')->first();
 
+            $avgVolt = ($energy1->tegangan + $energy2->tegangan + $energy3->tegangan + $energy4->tegangan) / 4;
+            $avgCurrent = ($energy1->arus + $energy2->arus + $energy3->arus + $energy4->arus) / 4;
+            $avgFreq = ($energy1->frekuensi + $energy2->frekuensi + $energy3->frekuensi + $energy4->frekuensi) / 4;
+            $avgP = ($energy1->active_power + $energy2->active_power + $energy3->active_power + $energy4->active_power) / 4;
+            $avgQ = ($energy1->reactive_power + $energy2->reactive_power + $energy3->reactive_power + $energy4->reactive_power) / 4;
+            $avgS = ($energy1->apparent_power + $energy2->apparent_power + $energy3->apparent_power + $energy4->apparent_power) / 4;
+
             // Device Status
             $panels = EnergyPanel::get();
 
@@ -130,6 +137,12 @@ class PagesController extends Controller
                 'energyLastMonth',
                 'energy_cost',
                 'panels',
+                'avgVolt',
+                'avgCurrent',
+                'avgFreq',
+                'avgP',
+                'avgQ',
+                'avgS'
             ));
         }
     }

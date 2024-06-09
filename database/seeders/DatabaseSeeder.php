@@ -2,11 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\EnergyOutlet;
-use App\Models\FireAlarm;
-use App\Models\LightDimmer;
 use Illuminate\Database\Seeder;
-use Database\Seeders\EnergyPanelMasterSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AboutSeeder::class,
             EnergyCostSeeder::class,
             EnergyPanelSeeder::class,
+            EnergyKwhSeeder::class,
             EnergySeeder::class,
             UserSeeder::class,
         ]);

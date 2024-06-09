@@ -1,6 +1,10 @@
 # SBMS Gedung 4 Fakultas Teknik
 Untuk monitoring dan controlling panel SDP Gedung 4 Fakultas Teknik
 
+## Notes
+- Project ini hanya untuk monitoring dan controlling komponen energi
+- File-file sudah dicoba untuk seoptimal mungking (Hal-hal tidak terpakai seperti dht, firealarm, light, dll sudah dihapus)
+
 ## Installation
 
 ### Pre Requirements

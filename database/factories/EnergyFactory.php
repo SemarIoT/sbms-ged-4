@@ -34,7 +34,7 @@ class EnergyFactory extends Factory
             'tegangan' => $this->faker->numberBetween(210, 230),
             'active_power' => $this->faker->randomFloat(2, 0, 3),
             'reactive_power' => $this->faker->randomFloat(2, 0, 3),
-            'apparent_power' => $this->faker->randomFloat(2, 0, 3),
+            'power_factor' => $this->faker->randomFloat(1, 0, 1),
             // 'created_at' => $this->faker->dateTimeInInterval('-2 month', '+2 month'),
             'created_at' => $currentDateTime,
         ];

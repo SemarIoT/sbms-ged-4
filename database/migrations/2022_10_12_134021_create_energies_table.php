@@ -21,7 +21,7 @@ class CreateEnergiesTable extends Migration
             $table->float('tegangan');
             $table->float('active_power');
             $table->float('reactive_power');
-            $table->float('apparent_power');
+            $table->float('power_factor');
             $table->timestamps();
         });
     }

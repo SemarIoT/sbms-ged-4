@@ -16,21 +16,21 @@ class EnergyPanelSeeder extends Seeder
     {
         $user = [
             [
-                'nama' => 'Lantai 1',
+                'nama' => 'AC 1',
                 'status' => '1'
             ],
             [
-                'nama' => 'Lantai 2',
+                'nama' => 'Instalasi 1',
                 'status' => '0'
             ],
             [
-                'nama' => 'Lantai 3',
+                'nama' => 'AC 2',
                 'status' => '0'
             ],
             [
-                'nama' => 'Master',
+                'nama' => 'Instalasi 2',
                 'status' => '1'
-            ],
+            ]
         ];
 
         foreach ($user as $key => $value) {

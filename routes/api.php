@@ -23,6 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 /* ESP32 (Data Tegangan, Arus, dkk) */
 Route::get('get-energies', [NodeDataController::class, 'getEnergyMonitor']); // 300 data energy terakhir untuk debug dan stat
 Route::post('add-energies', [NodeDataController::class, 'addEnergyMonitor']); // Input data monitoring
+Route::post('add-daily', [NodeDataController::class, 'addDailyEnergy']);
+
 /* Hanya Data 'total_energy' dari Modbus */
 Route::get('get-kwh', [NodeDataController::class, 'getTotalEnergy']); // 1000 data 'total_energy' terakhir
 Route::post('add-kwh', [NodeDataController::class, 'addTotalEnergy']); // Input 'total_energy' saja 

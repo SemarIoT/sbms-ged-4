@@ -316,7 +316,7 @@
                             <div class="col-sm">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h3 class="h4 mb-3">Apparent Power (VA)</h3>
+                                        <h3 class="h4 mb-3">Power Factor</h3>
                                         <div class="row align-items-end">
                                             <div class="row align-items-center mb-0">
                                                 @php
@@ -326,7 +326,7 @@
                                                 @foreach ($panels as $panel)
                                                 <div class="col-lg-6">
                                                     <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                                        $energies[$i]->apparent_power }}</p>
+                                                        $energies[$i]->power_factor }}</p>
                                                     <p>{{ $panel->nama }}</p>
                                                 </div>
                                                 @php

@@ -280,7 +280,7 @@
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="h4 mb-3">Apparent Power (kVA)</h3>
+                                <h3 class="h4 mb-3">Power Factor</h3>
                                 <div class="row mb-0">
                                     @php
                                     $i = 1;
@@ -288,7 +288,7 @@
                                     @foreach ($devicesPanel as $energy_panel)
                                     <div class="col-sm-6 text-center">
                                         <p class="text-xl mb-0 text-dash-color-4">{{
-                                            $energiesCollection[$i]->apparent_power}} kVA</p>
+                                            $energiesCollection[$i]->power_factor}}</p>
                                         <p>{{$energy_panel->nama}}</p>
                                     </div>
                                     @endforeach

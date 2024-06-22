@@ -160,8 +160,8 @@
                                     <p class="text-lg text-gold">{{ $avgQ }} VAR</p>
                                 </div>
                                 <div class="col-sm d-flex justify-content-between px-4">
-                                    <p class="text-lg text-dash-color-4">Apparent Power</p>
-                                    <p class="text-lg text-dash-color-4">{{ $avgS }} VA</p>
+                                    <p class="text-lg text-dash-color-4">Power Factor</p>
+                                    <p class="text-lg text-dash-color-4">{{ $avgS }}</p>
                                 </div>
                             </div>
                         </div>
@@ -303,7 +303,7 @@
                     <div class="col-sm">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="h4 mb-3">Apparent Power (VA)</h3>
+                                <h3 class="h4 mb-3">Power Factor</h3>
                                 <div class="row align-items-end">
                                     <div class="row align-items-center mb-0">
                                         @php
@@ -313,7 +313,7 @@
                                         @foreach ($panels as $panel)
                                         <div class="col-lg-6 text-center">
                                             <p class="text-lg mb-0 text-dash-color-1">{{
-                                                $energies[$i]->apparent_power }} VA</p>
+                                                $energies[$i]->power_factor }}</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php

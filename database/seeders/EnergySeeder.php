@@ -14,6 +14,6 @@ class EnergySeeder extends Seeder
      */
     public function run()
     {
-        Energy::factory()->count(400)->create();
+        Energy::factory()->count(100)->create();
     }
 }

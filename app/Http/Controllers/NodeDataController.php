@@ -71,7 +71,7 @@ class NodeDataController extends Controller
         $data->tegangan = $request->v;
         $data->active_power = $request->p;
         $data->reactive_power = $request->q;
-        $data->apparent_power = $request->s;
+        $data->power_factor = $request->pf;
         if ($request->energy) {
             $data->energy = $request->energy;
         }
@@ -88,13 +88,13 @@ class NodeDataController extends Controller
     */
     public function getEnergyState()
     {
-        $data = EnergyPanel::select('nama', 'status')->where('nama', '=', 'AC 1')->first()->status;
-        $data2 = EnergyPanel::select('nama', 'status')->where('nama', '=', 'AC 2')->first()->status;
-        $data3 = EnergyPanel::select('nama', 'status')->where('nama', '=', 'Outlet')->first()->status;
-        $data4 = Light::find(1)->status;
-        $data5 = EnergyPanelMaster::select('nama', 'status')->where('nama', '=', 'Master')->first()->status;
+        $data1 = EnergyPanel::where('id', 1)->select('nama', 'status')->first();
+        $data2 = EnergyPanel::where('id', 2)->select('nama', 'status')->first();
+        $data3 = EnergyPanel::where('id', 3)->select('nama', 'status')->first();
+        $data4 = EnergyPanel::where('id', 4)->select('nama', 'status')->first();
+        // $data5 = EnergyPanelMaster::select('nama', 'status')->where('nama', '=', 'Master')->first()->status;
 
-        return response()->json(['AC 1' => $data, 'AC 2' => $data2, 'Outlet' => $data3, 'Lampu' => $data4, 'Master' => $data5]);
+        return response()->json([$data1->nama => $data1->status, $data2->nama => $data2->status, $data3->nama => $data3->status, $data4->nama => $data4->status]);
     }
 
     /* 
@@ -161,7 +161,7 @@ class NodeDataController extends Controller
         $data->tegangan = $request->v;
         $data->active_power = $request->p;
         $data->reactive_power = $request->q;
-        $data->apparent_power = $request->s;
+        $data->power_factor = $request->pfsockopen;
         $data->total_energy = $request->total_energy;
         $saved = $data->save();
 

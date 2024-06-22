@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Energy;
+use App\Models\EnergyKwh;
 use App\Models\EnergyCost;
 use App\Models\EnergyPanel;
 use Illuminate\Support\Carbon;
@@ -16,34 +17,29 @@ class PagesController extends Controller
         }
 
         // DateTime
-        $todayDate = Carbon::today()->toDateString(); // return Y-m-d string
-        $yesterdayDate = Carbon::now()->subDays(1)->toDateString();
-        $thisMonth = Carbon::now()->month; // return int
         $lastMonth = Carbon::now()->month - 1;
         $thisYear = Carbon::now()->year;
+
         // Energy
         $energy1 = Energy::where('id_kwh', 1)->latest()->first();
         $energy2 = Energy::where('id_kwh', 2)->latest()->first();
         $energy3 = Energy::where('id_kwh', 3)->latest()->first();
         $energy4 = Energy::where('id_kwh', 4)->latest()->first();
         $energyTillNow = $energy1->energy + $energy2->energy + $energy3->energy + $energy4->energy;
-        // EnergyToday
-        $energyYesterday = 0;
-        for ($i = 1; $i <= 4; $i++) {
-            try {
-                $eachYesterday = Energy::where('id_kwh', $i)->whereDate('created_at', $yesterdayDate)->latest()->first()->energy;
-            } catch (\Throwable $th) {
-                $eachYesterday = Energy::where('id_kwh', $i)->latest()->first()->energy;
-            }
 
-            $energyYesterday += $eachYesterday;
+        // EnergyToday
+        $econ = new EnergyController();
+        $eachTodayEnergy = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $eachTodayEnergy[$i] = $econ->getTodayEnergy($i)->first()->today_energy;
         }
-        $energy_today = ($energyTillNow - $energyYesterday) / 1000;
+        $energy_today = array_sum($eachTodayEnergy) / 1000;
+
         // Energy Last Month
         $energyLastMonth = 0;
         for ($i = 1; $i <= 4; $i++) {
             try {
-                $eachLastMonth = Energy::where('id_kwh', $i)->whereMonth('created_at', $lastMonth)->whereYear('created_at', $thisYear)->latest()->first()->energy;
+                $eachLastMonth = EnergyKwh::where('id_kwh', $i)->whereMonth('created_at', $lastMonth)->whereYear('created_at', $thisYear)->latest()->first()->total_energy / 1000;
             } catch (\Exception $e) {
                 // Jika data bulan yang lalu belum ada, maka dianggap 0
                 $eachLastMonth = 0;
@@ -51,7 +47,11 @@ class PagesController extends Controller
             $energyLastMonth += $eachLastMonth;
         }
         // Energy This Month
-        $energy_month = ($energyTillNow - $energyLastMonth) / 1000;
+        $eachMonthEnergy = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $eachMonthEnergy[$i] = $econ->getThisMonthEnergy($i)->first()->monthly_kwh;
+        }
+        $energy_month = array_sum($eachMonthEnergy);
         $energy_cost = EnergyCost::latest()->pluck('harga')->first();
 
         // Device Status
@@ -76,36 +76,30 @@ class PagesController extends Controller
         if (!auth()->check()) {
             return redirect('/login');
         } else {
-
             // DateTime
-            $todayDate = Carbon::today()->toDateString(); // return Y-m-d string
-            $yesterdayDate = Carbon::now()->subDays(1)->toDateString();
-            $thisMonth = Carbon::now()->month; // return int
             $lastMonth = Carbon::now()->month - 1;
             $thisYear = Carbon::now()->year;
+
             // Energy
             $energy1 = Energy::where('id_kwh', 1)->latest()->first();
             $energy2 = Energy::where('id_kwh', 2)->latest()->first();
             $energy3 = Energy::where('id_kwh', 3)->latest()->first();
             $energy4 = Energy::where('id_kwh', 4)->latest()->first();
             $energyTillNow = $energy1->energy + $energy2->energy + $energy3->energy + $energy4->energy;
-            // EnergyToday
-            $energyYesterday = 0;
-            for ($i = 1; $i <= 4; $i++) {
-                try {
-                    $eachYesterday = Energy::where('id_kwh', $i)->whereDate('created_at', $yesterdayDate)->latest()->first()->energy;
-                } catch (\Throwable $th) {
-                    $eachYesterday = Energy::where('id_kwh', $i)->latest()->first()->energy;
-                }
 
-                $energyYesterday += $eachYesterday;
+            // EnergyToday
+            $econ = new EnergyController();
+            $eachTodayEnergy = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $eachTodayEnergy[$i] = $econ->getTodayEnergy($i)->first()->today_energy;
             }
-            $energy_today = ($energyTillNow - $energyYesterday) / 1000;
+            $energy_today = array_sum($eachTodayEnergy) / 1000;
+
             // Energy Last Month
             $energyLastMonth = 0;
             for ($i = 1; $i <= 4; $i++) {
                 try {
-                    $eachLastMonth = Energy::where('id_kwh', $i)->whereMonth('created_at', $lastMonth)->whereYear('created_at', $thisYear)->latest()->first()->energy;
+                    $eachLastMonth = EnergyKwh::where('id_kwh', $i)->whereMonth('created_at', $lastMonth)->whereYear('created_at', $thisYear)->latest()->first()->total_energy / 1000;
                 } catch (\Exception $e) {
                     // Jika data bulan yang lalu belum ada, maka dianggap 0
                     $eachLastMonth = 0;
@@ -113,7 +107,11 @@ class PagesController extends Controller
                 $energyLastMonth += $eachLastMonth;
             }
             // Energy This Month
-            $energy_month = ($energyTillNow - $energyLastMonth) / 1000;
+            $eachMonthEnergy = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $eachMonthEnergy[$i] = $econ->getThisMonthEnergy($i)->first()->monthly_kwh;
+            }
+            $energy_month = array_sum($eachMonthEnergy);
             $energy_cost = EnergyCost::latest()->pluck('harga')->first();
 
             $avgVolt = ($energy1->tegangan + $energy2->tegangan + $energy3->tegangan + $energy4->tegangan) / 4;
@@ -121,7 +119,7 @@ class PagesController extends Controller
             $avgFreq = ($energy1->frekuensi + $energy2->frekuensi + $energy3->frekuensi + $energy4->frekuensi) / 4;
             $avgP = ($energy1->active_power + $energy2->active_power + $energy3->active_power + $energy4->active_power) / 4;
             $avgQ = ($energy1->reactive_power + $energy2->reactive_power + $energy3->reactive_power + $energy4->reactive_power) / 4;
-            $avgS = ($energy1->apparent_power + $energy2->apparent_power + $energy3->apparent_power + $energy4->apparent_power) / 4;
+            $avgS = ($energy1->power_factor + $energy2->power_factor + $energy3->power_factor + $energy4->power_factor) / 4;
 
             // Device Status
             $panels = EnergyPanel::get();

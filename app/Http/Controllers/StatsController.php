@@ -102,14 +102,14 @@ class StatsController extends Controller
 
     public function getArusStat($id)
     {
-        $results = Energy::where('id_kwh', $id)->select('arus', 'created_at')->latest()->get();
+        $results = Energy::where('id_kwh', $id)->select('i_A', 'created_at')->latest()->get();
 
         return response()->json($results);
     }
 
     public function getActivePowerStat($id)
     {
-        $results = Energy::where('id_kwh', $id)->select('active_power', 'created_at')->latest()->get();
+        $results = Energy::where('id_kwh', $id)->select('p_A', 'created_at')->latest()->get();
 
         return response()->json($results);
     }

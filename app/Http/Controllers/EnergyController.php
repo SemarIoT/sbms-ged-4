@@ -63,12 +63,12 @@ class EnergyController extends Controller
         $energies[4] = $energies4;
         $energiesCollection = collect($energies);
 
-        $avgVolt = ($energies1->tegangan + $energies2->tegangan + $energies3->tegangan + $energies4->tegangan) / 4;
-        $avgCurrent = ($energies1->arus + $energies2->arus + $energies3->arus + $energies4->arus) / 4;
+        $avgVolt = ($energies1->v_A + $energies2->v_A + $energies3->v_A + $energies4->v_A) / 4;
+        $avgCurrent = ($energies1->i_A + $energies2->i_A + $energies3->i_A + $energies4->i_A) / 4;
         $avgFreq = ($energies1->frekuensi + $energies2->frekuensi + $energies3->frekuensi + $energies4->frekuensi) / 4;
-        $avgP = ($energies1->active_power + $energies2->active_power + $energies3->active_power + $energies4->active_power) / 4;
+        $avgP = ($energies1->p_A + $energies2->p_A + $energies3->p_A + $energies4->p_A) / 4;
         $avgQ = ($energies1->reactive_power + $energies2->reactive_power + $energies3->reactive_power + $energies4->reactive_power) / 4;
-        $avgS = ($energies1->power_factor + $energies2->power_factor + $energies3->power_factor + $energies4->power_factor) / 4;
+        $avgS = ($energies1->pf_A + $energies2->pf_A + $energies3->pf_A + $energies4->pf_A) / 4;
 
         $energy_cost = EnergyCost::latest()->first()->harga;
         $energy_cost_pokok = EnergyCost::latest()->first()->pokok;
@@ -358,6 +358,12 @@ class EnergyController extends Controller
             $item->energy_meter = $energy->total_energy;
         }
 
+        $lenght = count($data);
+        if ($lenght == 1) {
+            $data[0]->today_energy = $data[0]->energy_meter / 1000;
+            return $data;
+        }
+
         for ($i = 0; $i < 1; $i++) {
             $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
         }
@@ -380,6 +386,12 @@ class EnergyController extends Controller
 
         $length = count($data);
 
+        if ($length == 1) {
+            $data[0]->monthly_kwh = $data[0]->total_energy / 1000;
+            $data[0]->bill = intval($data[0]->monthly_kwh * $price);
+            $data[0]->bulan = Carbon::create(null, $data[0]->month)->monthName;
+            return $data;
+        }
         for ($i = 1; $i < $length; $i++) {
             $data[$i]->monthly_kwh = ($data[$i]->total_energy - $data[$i - 1]->total_energy) / 1000; // energy perbulan dalam kWh
             $data[$i]->bill = intval($data[$i]->monthly_kwh * $price); // biaya listrik perbulan

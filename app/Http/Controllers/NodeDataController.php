@@ -66,12 +66,21 @@ class NodeDataController extends Controller
     {
         $data = new Energy;
         $data->id_kwh = $request->id_kwh;
+        $data->i_A = $request->i_A;
+        $data->i_B = $request->i_B;
+        $data->i_C = $request->i_C;
+        $data->v_A = $request->v_A;
+        $data->v_B = $request->v_B;
+        $data->v_C = $request->v_C;
+        $data->p_A = $request->p_A;
+        $data->p_B = $request->p_B;
+        $data->p_C = $request->p_C;
+        $data->pf_A = $request->pf_A;
+        $data->pf_B = $request->pf_B;
+        $data->pf_C = $request->pf_C;
         $data->frekuensi = $request->f;
-        $data->arus = $request->i;
-        $data->tegangan = $request->v;
-        $data->active_power = $request->p;
-        $data->reactive_power = $request->q;
-        $data->power_factor = $request->pf;
+        $data->reactive_power = $request->rp;
+
         if ($request->energy) {
             $data->energy = $request->energy;
         }

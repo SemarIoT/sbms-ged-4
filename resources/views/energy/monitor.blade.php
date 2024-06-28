@@ -137,7 +137,7 @@
                             <div class="col-md d-flex justify-content-around">
                                 <p class="text-md text-start">{{$energy_panel->nama}} :</p>
                                 <p class="text-md mb-0 text-danger text-end">{{
-                                    $energiesCollection[$i]->arus
+                                    $energiesCollection[$i]->i_A
                                     }} <span class="text-success mb-0">A</span></p>
                             </div>
                             @endforeach
@@ -160,7 +160,7 @@
                             <div class="col-md d-flex justify-content-around">
                                 <p class="text-md text-start">{{$energy_panel->nama}} :</p>
                                 <p class="text-md mb-0 text-danger text-end">{{
-                                    $energiesCollection[$i]->active_power
+                                    $energiesCollection[$i]->p_A
                                     }} <span class="text-success mb-0">kW</span></p>
                             </div>
                             @endforeach
@@ -187,7 +187,7 @@
                                     @foreach ($devicesPanel as $energy_panel)
                                     <div class="col-sm-6 text-center">
                                         <p class="text-xl mb-0 text-dash-color-1">{{
-                                            $energiesCollection[$i]->tegangan }} V</p>
+                                            $energiesCollection[$i]->v_A }} V</p>
                                         <p>{{$energy_panel->nama}}</p>
                                     </div>
                                     @endforeach
@@ -205,7 +205,7 @@
                                     @endphp
                                     @foreach ($devicesPanel as $energy_panel)
                                     <div class="col-sm-6 text-center">
-                                        <p class="text-xl mb-0 text-success">{{ $energiesCollection[$i]->arus}} A
+                                        <p class="text-xl mb-0 text-success">{{ $energiesCollection[$i]->i_A}} A
                                         </p>
                                         <p>{{$energy_panel->nama}}</p>
                                     </div>
@@ -250,7 +250,7 @@
                                     @foreach ($devicesPanel as $energy_panel)
                                     <div class="col-sm-6 text-center">
                                         <p class="text-xl mb-0 text-blue">{{
-                                            $energiesCollection[$i]->active_power }} kW</p>
+                                            $energiesCollection[$i]->p_A }} kW</p>
                                         <p>{{$energy_panel->nama}}</p>
                                     </div>
                                     @endforeach
@@ -288,7 +288,7 @@
                                     @foreach ($devicesPanel as $energy_panel)
                                     <div class="col-sm-6 text-center">
                                         <p class="text-xl mb-0 text-dash-color-4">{{
-                                            $energiesCollection[$i]->power_factor}}</p>
+                                            $energiesCollection[$i]->pf_A}}</p>
                                         <p>{{$energy_panel->nama}}</p>
                                     </div>
                                     @endforeach
@@ -367,26 +367,26 @@
         });
         $.getJSON("api/arus-stat/1", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a1.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                a1.push({ x: new Date(data[i].created_at), y: Number(data[i].i_A) });
             }
             arusChart.render();
             console.log(a1);
         });
         $.getJSON("api/arus-stat/2", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a2.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                a2.push({ x: new Date(data[i].created_at), y: Number(data[i].i_A) });
             }
             arusChart.render();
         });
         $.getJSON("api/arus-stat/3", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a3.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                a3.push({ x: new Date(data[i].created_at), y: Number(data[i].i_A) });
             }
             arusChart.render();
         });
         $.getJSON("api/arus-stat/4", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a4.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                a4.push({ x: new Date(data[i].created_at), y: Number(data[i].i_A) });
             }
             arusChart.render();
         });
@@ -439,26 +439,26 @@
         });
         $.getJSON("api/active-stat/1", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a1.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                p1.push({ x: new Date(data[i].created_at), y: Number(data[i].p_A) });
             }
             activeChart.render();
             console.log(a1);
         });
         $.getJSON("api/active-stat/2", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a2.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                p2.push({ x: new Date(data[i].created_at), y: Number(data[i].p_A) });
             }
             activeChart.render();
         });
         $.getJSON("api/active-stat/3", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a3.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                p3.push({ x: new Date(data[i].created_at), y: Number(data[i].p_A) });
             }
             activeChart.render();
         });
         $.getJSON("api/active-stat/4", function (data) {
             for (var i = 0; i < data.length; i++) {
-                a4.push({ x: new Date(data[i].created_at), y: Number(data[i].arus) });
+                p4.push({ x: new Date(data[i].created_at), y: Number(data[i].p_A) });
             }
             activeChart.render();
         });

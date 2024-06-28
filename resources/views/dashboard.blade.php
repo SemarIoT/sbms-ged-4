@@ -186,7 +186,7 @@
                                     @foreach ($panels as $panel)
                                     <div class="col-lg-6 text-center">
                                         <p class="text-lg mb-0 text-dash-color-1">{{
-                                            $energies[$i]->tegangan }} V</p>
+                                            $energies[$i]->v_A }} V</p>
                                         <p>{{ $panel->nama }}</p>
                                     </div>
                                     @php
@@ -210,7 +210,7 @@
                                         @foreach ($panels as $panel)
                                         <div class="col-lg-6 text-center">
                                             <p class="text-lg mb-0 text-dash-color-1">{{
-                                                $energies[$i]->arus }} A</p>
+                                                $energies[$i]->i_A }} A</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php
@@ -263,7 +263,7 @@
                                         @foreach ($panels as $panel)
                                         <div class="col-lg-6 text-center">
                                             <p class="text-lg mb-0 text-dash-color-1">{{
-                                                $energies[$i]->active_power }} W</p>
+                                                $energies[$i]->p_A }} W</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php
@@ -313,7 +313,7 @@
                                         @foreach ($panels as $panel)
                                         <div class="col-lg-6 text-center">
                                             <p class="text-lg mb-0 text-dash-color-1">{{
-                                                $energies[$i]->power_factor }}</p>
+                                                $energies[$i]->pf_A }}</p>
                                             <p>{{ $panel->nama }}</p>
                                         </div>
                                         @php

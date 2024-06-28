@@ -17,8 +17,8 @@ class DatabaseSeeder extends Seeder
             AboutSeeder::class,
             EnergyCostSeeder::class,
             EnergyPanelSeeder::class,
-            EnergyKwhSeeder::class,
-            EnergySeeder::class,
+            // EnergyKwhSeeder::class,
+            // EnergySeeder::class,
             UserSeeder::class,
         ]);
     }

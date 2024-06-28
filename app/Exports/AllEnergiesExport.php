@@ -17,7 +17,7 @@ class AllEnergiesExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['id', 'id_kwh', 'frekuensi', 'arus', 'tegangan', 'active_power', 'reactive_power', 'apparent_power', 'timestamp'];
+        return ['id', 'id_kwh', 'i_A', 'i_B', 'i_C', 'v_A', 'v_B', 'v_C', 'p_A', 'p_B', 'p_C', 'pf_A', 'pf_B', 'pf_C', 'frekuensi', 'reactive_power', 'timestamp'];
     }
 
     public function collection()

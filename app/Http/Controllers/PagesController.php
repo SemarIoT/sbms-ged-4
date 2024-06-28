@@ -25,7 +25,7 @@ class PagesController extends Controller
         $energy2 = Energy::where('id_kwh', 2)->latest()->first();
         $energy3 = Energy::where('id_kwh', 3)->latest()->first();
         $energy4 = Energy::where('id_kwh', 4)->latest()->first();
-        $energyTillNow = $energy1->energy + $energy2->energy + $energy3->energy + $energy4->energy;
+        // $energyTillNow = $energy1->energy + $energy2->energy + $energy3->energy + $energy4->energy;
 
         // EnergyToday
         $econ = new EnergyController();
@@ -80,13 +80,6 @@ class PagesController extends Controller
             $lastMonth = Carbon::now()->month - 1;
             $thisYear = Carbon::now()->year;
 
-            // Energy
-            $energy1 = Energy::where('id_kwh', 1)->latest()->first();
-            $energy2 = Energy::where('id_kwh', 2)->latest()->first();
-            $energy3 = Energy::where('id_kwh', 3)->latest()->first();
-            $energy4 = Energy::where('id_kwh', 4)->latest()->first();
-            $energyTillNow = $energy1->energy + $energy2->energy + $energy3->energy + $energy4->energy;
-
             // EnergyToday
             $econ = new EnergyController();
             $eachTodayEnergy = [];
@@ -114,12 +107,18 @@ class PagesController extends Controller
             $energy_month = array_sum($eachMonthEnergy);
             $energy_cost = EnergyCost::latest()->pluck('harga')->first();
 
-            $avgVolt = ($energy1->tegangan + $energy2->tegangan + $energy3->tegangan + $energy4->tegangan) / 4;
-            $avgCurrent = ($energy1->arus + $energy2->arus + $energy3->arus + $energy4->arus) / 4;
+            // Energy
+            $energy1 = Energy::where('id_kwh', 1)->latest()->first();
+            $energy2 = Energy::where('id_kwh', 2)->latest()->first();
+            $energy3 = Energy::where('id_kwh', 3)->latest()->first();
+            $energy4 = Energy::where('id_kwh', 4)->latest()->first();
+
+            $avgVolt = ($energy1->v_A + $energy2->v_A + $energy3->v_A + $energy4->v_A) / 4;
+            $avgCurrent = ($energy1->i_A + $energy2->i_A + $energy3->i_A + $energy4->i_A) / 4;
             $avgFreq = ($energy1->frekuensi + $energy2->frekuensi + $energy3->frekuensi + $energy4->frekuensi) / 4;
-            $avgP = ($energy1->active_power + $energy2->active_power + $energy3->active_power + $energy4->active_power) / 4;
+            $avgP = ($energy1->p_A + $energy2->p_A + $energy3->p_A + $energy4->p_A) / 4;
             $avgQ = ($energy1->reactive_power + $energy2->reactive_power + $energy3->reactive_power + $energy4->reactive_power) / 4;
-            $avgS = ($energy1->power_factor + $energy2->power_factor + $energy3->power_factor + $energy4->power_factor) / 4;
+            $avgS = ($energy1->pf_A + $energy2->pf_A + $energy3->pf_A + $energy4->pf_A) / 4;
 
             // Device Status
             $panels = EnergyPanel::get();

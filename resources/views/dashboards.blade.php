@@ -326,7 +326,7 @@
                                                 @foreach ($panels as $panel)
                                                 <div class="col-lg-6">
                                                     <p class="text-md fw-light mb-0 text-dash-color-1">{{
-                                                        $energies[$i]->pf_A }}</p>
+                                                        ($energies[$i]->pf_A) / 10 }}</p>
                                                     <p>{{ $panel->nama }}</p>
                                                 </div>
                                                 @php

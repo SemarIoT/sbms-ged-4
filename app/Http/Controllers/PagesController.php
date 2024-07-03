@@ -20,13 +20,6 @@ class PagesController extends Controller
         $lastMonth = Carbon::now()->month - 1;
         $thisYear = Carbon::now()->year;
 
-        // Energy
-        $energy1 = Energy::where('id_kwh', 1)->latest()->first();
-        $energy2 = Energy::where('id_kwh', 2)->latest()->first();
-        $energy3 = Energy::where('id_kwh', 3)->latest()->first();
-        $energy4 = Energy::where('id_kwh', 4)->latest()->first();
-        // $energyTillNow = $energy1->energy + $energy2->energy + $energy3->energy + $energy4->energy;
-
         // EnergyToday
         $econ = new EnergyController();
         $eachTodayEnergy = [];
@@ -53,6 +46,12 @@ class PagesController extends Controller
         }
         $energy_month = array_sum($eachMonthEnergy);
         $energy_cost = EnergyCost::latest()->pluck('harga')->first();
+
+        // Energy
+        $energy1 = Energy::where('id_kwh', 1)->latest()->first();
+        $energy2 = Energy::where('id_kwh', 2)->latest()->first();
+        $energy3 = Energy::where('id_kwh', 3)->latest()->first();
+        $energy4 = Energy::where('id_kwh', 4)->latest()->first();
 
         // Device Status
         $panels = EnergyPanel::get();
@@ -118,7 +117,7 @@ class PagesController extends Controller
             $avgFreq = ($energy1->frekuensi + $energy2->frekuensi + $energy3->frekuensi + $energy4->frekuensi) / 4;
             $avgP = ($energy1->p_A + $energy2->p_A + $energy3->p_A + $energy4->p_A) / 4;
             $avgQ = ($energy1->reactive_power + $energy2->reactive_power + $energy3->reactive_power + $energy4->reactive_power) / 4;
-            $avgS = ($energy1->pf_A + $energy2->pf_A + $energy3->pf_A + $energy4->pf_A) / 4;
+            $avgS = (($energy1->pf_A + $energy2->pf_A + $energy3->pf_A + $energy4->pf_A) / 4) / 10;
 
             // Device Status
             $panels = EnergyPanel::get();

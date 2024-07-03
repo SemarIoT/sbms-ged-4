@@ -44,8 +44,12 @@ Route::get('relay-state', [NodeDataController::class, 'getEnergyState']); // Dib
 /* API untuk menampilkan chart di statistics */
 Route::get('daily-stat/{id}', [StatsController::class, 'getDailyEnergyStat']); // 'total_energy' harian
 Route::get('monthly-stat/{id}', [StatsController::class, 'getMonthlyEnergyStat']); // 'total_energy' bulanan
-Route::get('arus-stat/{id}', [StatsController::class, 'getArusStat']);
-Route::get('active-stat/{id}', [StatsController::class, 'getActivePowerStat']);
+Route::get('arus-stat-r/{id}', [StatsController::class, 'getArusStatA']);
+Route::get('arus-stat-s/{id}', [StatsController::class, 'getArusStatB']);
+Route::get('arus-stat-t/{id}', [StatsController::class, 'getArusStatC']);
+Route::get('active-stat-r/{id}', [StatsController::class, 'getActivePowerStatA']);
+Route::get('active-stat-s/{id}', [StatsController::class, 'getActivePowerStatB']);
+Route::get('active-stat-t/{id}', [StatsController::class, 'getActivePowerStatC']);
 
 
 Route::get('energyStat', [NodeDataController::class, 'energyStatistik'])->name('energyStatistik');

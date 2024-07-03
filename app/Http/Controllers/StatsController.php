@@ -100,16 +100,40 @@ class StatsController extends Controller
         return $data;
     }
 
-    public function getArusStat($id)
+    public function getArusStatA($id)
     {
-        $results = Energy::where('id_kwh', $id)->select('i_A', 'created_at')->latest()->get();
+        $results = Energy::where('id_kwh', $id)->select('i_A', 'created_at')->latest()->limit(500)->get();
+
+        return response()->json($results);
+    }
+    public function getArusStatB($id)
+    {
+        $results = Energy::where('id_kwh', $id)->select('i_B', 'created_at')->latest()->limit(500)->get();
+
+        return response()->json($results);
+    }
+    public function getArusStatC($id)
+    {
+        $results = Energy::where('id_kwh', $id)->select('i_C', 'created_at')->latest()->limit(500)->get();
 
         return response()->json($results);
     }
 
-    public function getActivePowerStat($id)
+    public function getActivePowerStatA($id)
     {
-        $results = Energy::where('id_kwh', $id)->select('p_A', 'created_at')->latest()->get();
+        $results = Energy::where('id_kwh', $id)->select('p_A', 'created_at')->latest()->limit(500)->get();
+
+        return response()->json($results);
+    }
+    public function getActivePowerStatB($id)
+    {
+        $results = Energy::where('id_kwh', $id)->select('p_B', 'created_at')->latest()->limit(500)->get();
+
+        return response()->json($results);
+    }
+    public function getActivePowerStatC($id)
+    {
+        $results = Energy::where('id_kwh', $id)->select('p_C', 'created_at')->latest()->limit(500)->get();
 
         return response()->json($results);
     }
